@@ -7,7 +7,7 @@
     <!-- Navbar Search-->
     <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
         <div class="input-group">
-            
+
         </div>
     </form>
     <!-- Navbar-->
@@ -19,12 +19,19 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li>
-                    <form action="{{ url('/logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="dropdown-item">Logout</button>
-                    </form>
+                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                        Lihat Profil
+                    </a>
                 </li>
+                <form action="{{ url('/logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="dropdown-item">Logout</button>
+                </form>
             </ul>
         </li>
     </ul>
 </nav>
+{{-- @include('auth.profile')
+{{-- @endif --}}
+
+{{-- @if (Auth::check() && Auth::user()->role == 'admin') --}}

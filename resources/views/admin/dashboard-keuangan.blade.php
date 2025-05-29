@@ -16,7 +16,7 @@
                                 <div class="card-body">
                                     <canvas id="myBarChart" width="100%" height="80"></canvas>
                                 </div>
-                               
+
                             </div>
                         </div>
                         {{-- <div class="col-lg-6">
@@ -74,7 +74,7 @@
                                 </tbody>
                             </table>
                             <a href="{{ route('download.keuangan') }}" class="btn btn-dark">
-                                <i class="bi bi-download"></i>&nbsp; Download Excel 
+                                <i class="bi bi-download"></i>&nbsp; Download Excel
                             </a>
                         </div>
                     </div>

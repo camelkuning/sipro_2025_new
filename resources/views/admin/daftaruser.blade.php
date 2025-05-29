@@ -5,13 +5,14 @@
         <main>
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Daftar User</h1>
+                <hr class="my-4">
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table me-1"></i>
                         Daftar User / Anggota
                     </div>
                     <div class="card-body">
-                        <table id="table" class="table table-striped table-bordered">
+                        <table id="table" class="table table-striped table-bordered shadow-sm">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -42,9 +43,9 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <button type="button" class="btn btn-dark" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
                             data-bs-target="#modalTambahUser">
-                            <i class="bi bi-plus-square"></i>&nbsp; Add User
+                            <i class="bi bi-person-plus-fill"></i>&nbsp; Add User
                         </button>
                     </div>
                 </div>
@@ -54,7 +55,7 @@
     <script>
         function deleteUser(url) {
             Swal.fire({
-                title: 'Apakah anda yakin?',
+                title: 'Apakah anda ingin menghapus data ini?',
                 text: "Data yang dihapus tidak dapat dikembalikan!",
                 icon: 'warning',
                 showCancelButton: true,

@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,13 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('keuangan', function (Blueprint $table) {
-            $table->string('kode_keuangan', 10)->primary(); // Ubah jadi string biar bisa pakai format "AKUN01"
-            $table->date('tanggal_awal');
-            $table->date('tanggal_akhir');
-            $table->decimal('konveksional', 15, 2);
-            $table->decimal('inkonveksional', 15, 2);
-            $table->decimal('total_penerimaan', 15, 2);
-            $table->timestamp('waktu_input')->nullable();
+            $table->id();
+            $table->unsignedBigInteger('akun_id')->nullable(); // tambahkan ini dulu jika belum ada
+            $table->foreign('akun_id')->references('id')->on('akun')->onDelete('set null');
+            $table->string('kode_keuangan')->unique(); // Contoh: AKUN2025-001, PROKER2025-KOMPELA-002
+            $table->date('tanggal');
+            $table->text('keterangan')->nullable();
+            $table->enum('tipe', ['kredit', 'debit']);
+            $table->bigInteger('jumlah');
+            $table->bigInteger('saldo_awal')->default(0);
+            $table->bigInteger('saldo_akhir')->default(0);
+            // $table->string('sumber_dana')->nullable(); // manual, alokasi_tahunan, kas_umum, dll
             $table->timestamps();
         });
     }
@@ -30,4 +35,3 @@ return new class extends Migration
         Schema::dropIfExists('keuangan');
     }
 };
-
