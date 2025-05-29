@@ -5,6 +5,8 @@ window.addEventListener('DOMContentLoaded', event => {
     const datatablesSimple = document.getElementById('datatablesSimple');
     if (datatablesSimple) {
         const dataTable = new simpleDatatables.DataTable(datatablesSimple, {
+            // pdf export
+            
             perPage: 10,
             perPageSelect: [5, 10, 20, 50],
             searchable: true,
@@ -36,7 +38,9 @@ window.addEventListener('DOMContentLoaded', event => {
                 // { select: 17, sortable: false },  //  aksi
                 // { select: 18, sortable: false },  //  aksi
 
-            ]
+            ],
+            
+
         });
     
         // Filter berdasarkan tipe (debit/kredit)

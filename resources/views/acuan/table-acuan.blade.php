@@ -17,6 +17,7 @@
 
                     </div>
                 </div>
+                <hr class="my-4">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         Form Update Acuan Pembagian
@@ -69,6 +70,7 @@
                         </form>
                     </div>
                 </div>
+                <hr class="my-4">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>

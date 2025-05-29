@@ -36,7 +36,7 @@ Route::middleware('role:admin')->group(function () {
     Route::get('/daftarProker', [AdminController::class, 'daftarProkerA']);
     Route::get('/daftarKeuangan', [AdminController::class, 'daftarKeuanganA'])->name('admin.daftarkeuangan');
 
-
+ 
     //untuk menu kerja user
     Route::get('/daftarUser', [AdminController::class, 'daftarUser']);
     Route::post('/postDaftarUser', [AdminController::class, 'postDaftarUser'])->name('postDaftarUser');

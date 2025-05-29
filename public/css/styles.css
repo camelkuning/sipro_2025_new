@@ -78,6 +78,15 @@
   --bs-code-color: #d63384;
   --bs-highlight-bg: #fff3cd;
 }
+.card-hover {
+  transition: box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease, scale 0.3s ease, duration 0.3s ease, transform 0.3s ease, opacity 0.3s ease , filter 0.3s ease , backdrop-filter 0.3s ease;
+}
+
+.card-hover:hover {
+  scale: 1.05; /* Sedikit memperbesar ukuran */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan */
+}
+
 /*# JEDAG JEDUG NJIR*/
 @keyframes shake {
     0% { transform: translateX(0); }
