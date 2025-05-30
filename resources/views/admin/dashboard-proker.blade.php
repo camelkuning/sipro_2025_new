@@ -4,11 +4,23 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h2 class="mt-4">Dashboard Program Kerja</h2>
+                <h1 class="mt-4">Dashboard Program Kerja</h1>
 
-                <hr class="my-4">
-                <div class="alert alert-success" role="alert">
-                    Woi pepek
+                <hr class="my-2">
+                <div class="mt-2 mb-4 p-3 bg-light rounded shadow-sm text-center">
+                    <h5 class="mb-2">GKI Via Dolorosa Bintuni</h5>
+
+                    <div class="d-flex justify-content-center gap-4 flex-wrap">
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-calendar-alt me-2"></i>
+                            <span id="tanggal">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-clock me-2"></i>
+                            <span id="jam">{{ \Carbon\Carbon::now()->format('HH:mm:ss') }}</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="row mt-3 gy-4">
                     <!-- Proker Aktif -->
@@ -55,7 +67,7 @@
                                 </div>
                             </div>
                             <div class="mt-3">
-                                <h2 class="fw-bold text-center value" akhi="{{ $jumlahDigunakan ?? 0 }}">Rp  0</h2>
+                                <h2 class="fw-bold text-center value" akhi="{{ $jumlahDigunakan ?? 0 }}">Rp 0</h2>
                             </div>
                         </div>
                     </div>
@@ -120,6 +132,19 @@
 
                 updateCount();
             });
+        </script>
+
+        <script>
+            function updateJam() {
+                const waktu = new Date();
+                const jam = waktu.getHours().toString().padStart(2, '0');
+                const menit = waktu.getMinutes().toString().padStart(2, '0');
+                const detik = waktu.getSeconds().toString().padStart(2, '0');
+                document.getElementById('jam').textContent = `${jam}:${menit}:${detik}`;
+            }
+
+            setInterval(updateJam, 1000);
+            updateJam(); // jalankan langsung saat halaman dimuat
         </script>
     @endpush
     @include('admin.detail-calendar')

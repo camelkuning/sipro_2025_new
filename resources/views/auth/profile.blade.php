@@ -9,7 +9,6 @@
             </div>
 
             <div class="modal-body">
-                <h6 class="mb-3">Daftar Pengguna:</h6>
                 @foreach ($users as $user)
                     @if ($user->role == Auth::user()->role)
                         <div class="border rounded p-2 mb-2">

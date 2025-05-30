@@ -8,15 +8,19 @@ document.addEventListener("DOMContentLoaded", function () {
             const ctx = document.getElementById('chartKeuangan').getContext('2d');
 
             new Chart(ctx, {
-                type: 'bar',
+                type: 'line', // UBAH DARI 'bar' KE 'line'
                 data: {
                     labels: bulan,
                     datasets: [{
                         label: 'Total Pemasukan per Bulan',
                         data: total,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        fill: true,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
+                        borderWidth: 2,
+                        tension: 0.3, // biar garisnya agak melengkung
+                        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                        pointRadius: 4
                     }]
                 },
                 options: {
@@ -24,6 +28,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     scales: {
                         y: {
                             beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
                         }
                     }
                 }

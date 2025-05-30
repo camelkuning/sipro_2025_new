@@ -8,6 +8,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <meta property="og:image" content="{{ asset('assets/img/logo.png') }}" />
+
     <title>@yield('title')</title>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -30,7 +30,7 @@
                                     <h3 class="text-center font-weight-light my-4">Shalom, Selamat Datang</h3>
                                 </div> --}}
                                 <div class="card-header text-center">
-                                    <img src="{{ asset('assets/img/logo.jpg') }}" alt="Logo Gereja" class="logo-img">
+                                    <img src="{{ asset('assets/img/logo.png') }}" alt="Logo Gereja" class="logo-img">
                                 </div>
                                 <div class="card-body">
                                     <form action="{{ url('/postlogin') }}" method="POST">
