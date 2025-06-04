@@ -1,18 +1,25 @@
 @extends('layouts.main')
-@section('title', 'Admin | Tabel Acuan Pembagian')
+@section('title', 'Admin | Kontrol Sistem')
 @section('content')
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Acuan Pembagian</h1>
+                <h1 class="mt-4">Kontrol Sistem</h1>
                 <hr class="my-4">
                 <div class="card mb-4 shadow-sm col-md-4">
                     <div class="card-body shadow-sm">
-                        <h5 class="card-title">Progress Penerimaan</h5>
+                        <h5 class="card-title">Arsip Semua Tabel</h5>
                         <hr class="my-4">
+
                         <form method="POST" action="{{ route('aproveKeuangan') }}" id="formSimpanKeuangan">
                             @csrf
-                            <button type="button" class="btn btn-success mt-3" id="btnKonfirmasiSimpan">Arsipkan</button>
+                            {{-- @if ($sudah12Bulan) --}}
+                                <button type="button" class="btn btn-success mt-3"
+                                    id="btnKonfirmasiSimpan">Arsipkan</button>
+                            {{-- @else
+                                <button type="button" class="btn btn-secondary mt-3" disabled
+                                    title="Data belum lengkap 12 bulan. Tidak bisa arsipkan.">Arsipkan</button>
+                            @endif --}}
                         </form>
 
                     </div>

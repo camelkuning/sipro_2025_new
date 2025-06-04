@@ -1,18 +1,31 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\AcuanPembagian;
 use App\Models\Akun;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 
 class AcuanPembagianController extends Controller
 {
-    public function index()
-    {   
+    public function index( )
+    {
+        $tahunIni = date('Y');
+        
         $data = AcuanPembagian::all();
         $akun = Akun::all();
-        return view('acuan.table-acuan', compact('data', 'akun'));
+
+        $bulanUnik = DB::table('keuangan')
+            ->where('tipe', 'kredit')
+            ->whereYear('tanggal', $tahunIni)
+            ->selectRaw('MONTH(tanggal) as bulan')
+            ->distinct()
+            ->pluck('bulan');
+
+        $sudah12Bulan = $bulanUnik->count() === 12;
+        return view('acuan.table-acuan', compact('data', 'akun', 'sudah12Bulan'));
     }
 
     public function update(Request $request)
