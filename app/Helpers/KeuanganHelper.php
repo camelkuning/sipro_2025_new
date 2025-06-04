@@ -12,39 +12,30 @@ use Carbon\Carbon;
 
 class KeuanganHelper
 {
-    // /**
-    //  * Hitung saldo awal akun sampai sebelum tanggal tertentu
-    //  *
-    //  * @param int $akunId
-    //  * @param string $tanggal format Y-m-d
-    //  * @return float
-    //  */
-    // public static function saldoAwal(int $akunId, string $tanggal): float
-    // {
-    //     $saldo = DB::table('keuangan')
-    //         ->where('akun_id', $akunId)
-    //         ->where('tanggal', '<', $tanggal)
-    //         ->selectRaw("SUM(CASE WHEN tipe = 'kredit' THEN jumlah ELSE -jumlah END) as saldo")
-    //         ->value('saldo');
+    public static function getChartData()
+    {
+        return DB::table('keuangan')
+            ->selectRaw('
+        MONTH(tanggal) as bulan,
+        SUM(CASE WHEN tipe = "kredit" THEN jumlah ELSE 0 END) as total_kredit,
+        SUM(CASE WHEN tipe = "debit" THEN jumlah ELSE 0 END) as total_debit
+    ')
+            ->groupBy(DB::raw('MONTH(tanggal)'))
+            ->orderBy(DB::raw('MONTH(tanggal)'))
+            ->get();
+    }
 
-    //     return $saldo ?? 0;
-    // }
+    public static function getChartPembagian()
+    {
+        $acuan = DB::table('acuan_pembagian')->get()->keyBy('kategori');
 
-    // /**
-    //  * Hitung saldo akhir dari saldo awal + transaksi saat ini
-    //  *
-    //  * @param float $saldoAwal
-    //  * @param string $tipe 'kredit' atau 'debit'
-    //  * @param float $jumlah
-    //  * @return float
-    //  */
-    // public static function saldoAkhir(float $saldoAwal, string $tipe, float $jumlah): float
-    // {
-    //     if ($tipe === 'kredit') {
-    //         return $saldoAwal + $jumlah;
-    //     }
-    //     return $saldoAwal - $jumlah;
-    // }
+        return [
+            'Sinode' => $acuan['Sinode']->persentase ?? 0,
+            'Klasis' => $acuan['Klasis']->persentase ?? 0,
+            'Program Kerja' => $acuan['Program Kerja']->persentase ?? 0,
+            'Belanja Rutin Gereja' => $acuan['Belanja Rutin Gereja']->persentase ?? 0,
+        ];
+    }
 
     public static function getSaldoAkhirTerakhir($tanggal = null)
     {
@@ -59,5 +50,15 @@ class KeuanganHelper
             ->first();
 
         return $lastKeuangan ? $lastKeuangan->saldo_akhir : 0;
+    }
+
+    //getChartProgramkerja
+    public static function getChartProgramKerja()
+    {
+        return DB::table('program_kerja')
+        ->select('nama_program_kerja', 'anggaran_digunakan')
+        ->whereNotNull('tanggal_mulai')
+        ->orderBy('anggaran_digunakan', 'desc') // opsional: urutkan dari yang terbesar
+        ->get();
     }
 }

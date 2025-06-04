@@ -78,6 +78,40 @@
   --bs-code-color: #d63384;
   --bs-highlight-bg: #fff3cd;
 }
+
+.equal-height {
+        height: 100%;
+        min-height: 470px;
+    }
+
+    @media (max-width: 768px) {
+        .chart-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .chart-container {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+    }
+
+/* #pieChart {
+    width: 100% !important;
+    height: 100% !important;
+} */
+
+
+/* #datatablesSimple.dataTable tbody tr td.text-start {
+    text-align: left !important;
+}
+#datatablesSimple.dataTable tbody tr td.text-end {
+    text-align: right !important;
+} */
+
+
 .card-hover {
   transition: box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease, scale 0.3s ease, duration 0.3s ease, transform 0.3s ease, opacity 0.3s ease , filter 0.3s ease , backdrop-filter 0.3s ease;
 }

@@ -13,6 +13,7 @@ use App\Exports\KeuanganExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\AcuanPembagianController;
 use App\Http\Controllers\AkunController;
+use App\Http\Controllers\ExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,13 +31,15 @@ Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::post('/postlogin', [AuthController::class, 'postlogin'])->name('postlogin');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
+
+
 Route::middleware('role:admin')->group(function () {
     Route::get('/prokerAdmin', [AdminController::class, 'dashboardProkerA']);
     Route::get('/keuanganAdmin', [AdminController::class, 'dashboardKeuanganA']);
     Route::get('/daftarProker', [AdminController::class, 'daftarProkerA']);
     Route::get('/daftarKeuangan', [AdminController::class, 'daftarKeuanganA'])->name('admin.daftarkeuangan');
 
- 
+
     //untuk menu kerja user
     Route::get('/daftarUser', [AdminController::class, 'daftarUser']);
     Route::post('/postDaftarUser', [AdminController::class, 'postDaftarUser'])->name('postDaftarUser');
@@ -47,9 +50,7 @@ Route::middleware('role:admin')->group(function () {
 
     //untuk tambah keuangan
     Route::post('/postDaftarKeuangan', [AdminController::class, 'postDaftarKeuangan'])->name('postDaftarKeuangan');
-
     Route::get('/download-keuangan', [AdminController::class, 'downloadKeuangan'])->name('download.keuangan');
-
     //untuk approve data keuangan
     Route::post('/aproveKeuangan', [AdminController::class, 'aproveKeuangan'])->name('aproveKeuangan');
 
@@ -57,8 +58,6 @@ Route::middleware('role:admin')->group(function () {
 
     Route::get('/acuan-pembagian', [AcuanPembagianController::class, 'index'])->name('acuan.table-acuan');
     Route::post('/acuan-pembagian/update', [AcuanPembagianController::class, 'update'])->name('acuan.update');
-
-    
     Route::post('/proses-pembagian-bulanan', [AdminController::class, 'prosesPembagianBulanan'])->name('proses.pembagian.bulanan');
 
     // Route::get('/programKerja', [AdminController::class, 'daftarProkerA'])->name('program_kerja.daftarProker');
@@ -76,22 +75,22 @@ Route::middleware('role:admin')->group(function () {
     //menu akun
     Route::post('/akun', [AkunController::class, 'store'])->name('akun.store');
 
+   
+    
+});
+
+Route::middleware(['auth'])->group(function () {
     Route::get('/chart-data', [AdminController::class, 'getChartData'])->name('chart.data');
+    Route::get('/chart-pembagian', [UserController::class, 'getChartPembagian'])->name('chart.pembagian');
+    Route::get('/admin/export-keuangan-pdf', [ExportController::class, 'exportKeuanganPDF'])->name('keuangan.exportpdf');
+    Route::get('/chart-data-proker', [AdminController::class, 'chartDataProker']);
+
 
 });
 
-Route::middleware('role:user')->group(function () {
-    // Route::get('/prokerUser', [UserController::class, 'dashboardProkerU']);
-    // Route::get('/keuanganUser', [UserController::class, 'dashboardKeuanganU']);
-    // Route::get('/daftarProkerUser', [UserController::class, 'daftarProkerU']);
-    // Route::get('/daftarKeuanganUser', [UserController::class, 'daftarKeuanganU']);
-    // Route::get('/tambahProker', [UserController::class, 'tambahProker'])->name('tambahProker');
-    // Route::post('/postDaftarProker', [UserController::class, 'postDaftarProker'])->name('postDaftarProker');
-    // Route::get('/editProker/{id}', [UserController::class, 'editProker']);
-    // Route::put('/updateProker/{id}', [UserController::class, 'updateProker'])->name('updateProker');
-    // Route::get('/deleteProker/{id}', [UserController::class, 'deleteProker']);
 
-    // //untuk tambah keuangan
-    // Route::post('/postDaftarKeuanganUser', [UserController::class, 'postDaftarKeuangan'])->name('postDaftarKeuanganUser');
-
+Route::middleware(['role:user'])->group(function () {
+    Route::get('/proker', [UserController::class, 'dashboardProkerUser']);
+    Route::get('/keuangan', [UserController::class, 'dashboardKeuanganUser'])->name('user.dashboard.keuangan'); ;
+    // Route::get('/chart-data', [UserController::class, 'getChartData'])->name('chart.data');
 });

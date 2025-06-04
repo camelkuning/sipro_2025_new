@@ -3,7 +3,7 @@
         <div class="sb-sidenav-menu">
             <div class="nav">
                 @if (Auth::check() && Auth::user()->role == 'admin')
-                    <div class="sb-sidenav-menu-heading">Dashboard Admin</div>
+                    <div class="sb-sidenav-menu-heading">Dashboard</div>
                     <a class="nav-link fw-bold d-flex align-items-center" data-bs-toggle="collapse" href="#menuDashboard"
                         role="button">
                         <i class="bi bi-speedometer2 me-2"></i> Dashboard
@@ -25,6 +25,30 @@
                             </li>
                         </ul>
                     </div>
+                @elseif (Auth::check() && Auth::user()->role == 'user')
+                    <div class="sb-sidenav-menu-heading">Dashboard</div>
+                    <a class="nav-link fw-bold d-flex align-items-center" data-bs-toggle="collapse"
+                        href="#menuDashboard" role="button">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </a>
+                    <div class="collapse ps-4 {{ Request::is('proker', 'keuangan') ? 'show' : '' }}" id="menuDashboard"
+                        data-bs-parent="#layoutSidenav">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold {{ Request::is('proker') ? 'active' : '' }}" href="/proker">
+                                    <i class="bi bi-pie-chart me-2"></i> Program Kerja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold {{ Request::is('keuangan') ? 'active' : '' }}"
+                                    href="/keuangan">
+                                    <i class="bi bi-cash me-2"></i> Keuangan
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                @endif
+                @if (Auth::check() && Auth::user()->role == 'admin')
                     <hr class="my-2 border-white opacity-50">
                     <div class="sb-sidenav-menu-heading">Daftar Pengeluaran</div>
                     <a class="nav-link fw-bold d-flex align-items-center" data-bs-toggle="collapse" href="#daftarKerja"
@@ -72,21 +96,6 @@
                             </li>
                         </ul>
                     </div>
-                @endif
-
-                @if (Auth::check() && Auth::user()->role == 'user')
-                    <hr class="my-2 border-white opacity-50">
-                    <div class="sb-sidenav-menu-heading">Dashboard User</div>
-                    <a class="nav-link fw-bold d-flex align-items-center" href="/dashboard">
-                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                    </a>
-                @endif
-
-                <!-- Menu Profile User (Hanya tampil untuk user) -->
-                @if (Auth::check() && Auth::user()->role == 'user')
-                    <a class="nav-link fw-bold d-flex align-items-center" href="/profile">
-                        <i class="bi bi-person me-2"></i> Profile
-                    </a>
                 @endif
 
             </div>

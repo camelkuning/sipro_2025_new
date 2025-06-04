@@ -28,17 +28,24 @@ use App\Models\KeuanganDinamis;
 
 class AdminController extends Controller
 {
+    // public function __construct()
+    // {
+    //     $this->middleware(['auth', 'role:admin']);
+    // }
+
     public function getChartData()
     {
-        $data = DB::table('keuangan')
-            ->selectRaw('MONTH(tanggal) as bulan, SUM(jumlah) as total')
-            ->where('tipe', 'kredit')
-            ->groupBy(DB::raw('MONTH(tanggal)'))
-            ->orderBy(DB::raw('MONTH(tanggal)'))
-            ->get();
-
+        $data = KeuanganHelper::getChartData();
         return response()->json($data);
     }
+
+    public function chartDataProker()
+    {
+        $data = KeuanganHelper::getChartProgramKerja();
+        return response()->json($data);
+    }
+
+
 
     public function dashboardProkerA(Request $request)
     {
@@ -82,17 +89,110 @@ class AdminController extends Controller
         return view('admin.dashboard-proker', compact('tahunIni', 'jumlahAktif', 'jumlahSelesai', 'budget_berjalan', 'alokasi_tahun_depan', 'tahunBudget', 'jumlahDigunakan', 'jadwalProker', 'budgetData', 'alokasiData', 'events'));
     }
 
-    public function dashboardKeuanganA()
+    public function dashboardKeuanganA(Request $request)
     {
-        $keuangan = Keuangan::all();
-        $totalKeseluruhan = Keuangan::sum('total_penerimaan');
-        return view('admin.dashboard-keuangan', compact('keuangan', 'totalKeseluruhan'));
+        // Ambil daftar tahun dari tabel keuangan arsip
+        $tables = DB::select("SHOW TABLES LIKE 'keuangan_%'");
+        $tahunList = collect($tables)->map(function ($table) {
+            $tableName = collect($table)->first();
+            return str_replace('keuangan_', '', $tableName);
+        })->sortDesc()->values();
+
+        $tahunDipilih = $request->tahun;
+
+        if ($tahunDipilih) {
+            $namaTabel = "keuangan_$tahunDipilih";
+            if (Schema::hasTable($namaTabel)) {
+                $dataKeuangan = DB::table($namaTabel)
+                    ->orderBy('tanggal', 'asc')
+                    ->get();
+
+                $totalKredit = DB::table($namaTabel)
+                    ->where('tipe', 'kredit')
+                    ->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])
+                    ->sum('jumlah');
+
+                $totalDebit = DB::table($namaTabel)
+                    ->where('tipe', 'debit')
+                    ->where('kode_keuangan', 'not like', 'PROKER%')
+                    ->sum('jumlah');
+
+                $totalSaldo = DB::table($namaTabel)
+                    ->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])
+                    ->orderByDesc('tanggal')
+                    ->orderByDesc('id')
+                    ->value('saldo_akhir') ?? 0;
+
+                $debitProker = DB::table($namaTabel)
+                    ->where('tipe', 'debit')
+                    ->where('kode_keuangan', 'like', 'PROKER%')
+                    ->sum('jumlah');
+            } else {
+                $dataKeuangan = collect();
+                $totalKredit = 0;
+                $totalDebit = 0;
+                $totalSaldo = 0;
+                $debitProker = 0;
+            }
+        } else {
+            $dataKeuangan = DB::table('keuangan')
+                ->orderBy('tanggal', 'asc')
+                ->get();
+
+            $totalKredit = DB::table('keuangan')
+                ->where('tipe', 'kredit')
+                ->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])
+                ->sum('jumlah');
+
+            $totalDebit = DB::table('keuangan')
+                ->where('tipe', 'debit')
+                ->where('kode_keuangan', 'not like', 'PROKER%')
+                ->sum('jumlah');
+
+            $totalSaldo = DB::table('keuangan')
+                ->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])
+                ->orderByDesc('tanggal')
+                ->orderByDesc('id')
+                ->value('saldo_akhir') ?? 0;
+
+            $debitProker = DB::table('keuangan')
+                ->where('tipe', 'debit')
+                ->where('kode_keuangan', 'like', 'PROKER%')
+                ->sum('jumlah');
+
+            $tahunDipilih = "Keuangan Sekarang";
+        }
+
+        $keuanganModel = new Keuangan();
+        if ($tahunDipilih && Schema::hasTable("keuangan_$tahunDipilih")) {
+            $keuanganModel->setTable("keuangan_$tahunDipilih");
+        }
+
+        $query = $keuanganModel->with('akun');
+
+        if ($request->filled('dari_tanggal') && $request->filled('sampai_tanggal')) {
+            $dari = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dari_tanggal)->format('Y-m-d');
+            $sampai = \Carbon\Carbon::createFromFormat('d/m/Y', $request->sampai_tanggal)->format('Y-m-d');
+
+            $query->whereBetween('tanggal', [$dari, $sampai]);
+        }
+
+        $dataTanggal = $query->get();
+
+
+        return view('admin.dashboard-keuangan', compact(
+            'dataTanggal',
+            'dataKeuangan',
+            'totalKredit',
+            'totalDebit',
+            'totalSaldo',
+            'debitProker',
+            'tahunList',
+            'tahunDipilih'
+        ));
     }
 
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:admin']);
-    }
+
 
     public function daftarUser()
     {
@@ -607,50 +707,51 @@ class AdminController extends Controller
 
         $sudah12Bulan = $bulanUnik->count() === 12;
 
+        $latestKredit = DB::table('keuangan')
+            ->where('tipe', 'kredit')
+            ->orderBy('tanggal', 'desc')
+            ->first();
+
+        $currentMonth = Carbon::parse($latestKredit->tanggal)->month;
+        $currentYear = Carbon::parse($latestKredit->tanggal)->year;
+
         $bulanBelumDiproses = DB::table('keuangan')
             ->selectRaw('YEAR(tanggal) as tahun, MONTH(tanggal) as bulan')
-            ->where('tipe', 'Kredit')
+            ->where('tipe', 'kredit')
             ->groupBy('tahun', 'bulan')
             ->get()
             ->filter(function ($item) {
-                return !DB::table('keuangan')
-                    ->whereYear('tanggal', $item->tahun)
-                    ->whereMonth('tanggal', $item->bulan)
-                    ->whereIn('keterangan', [
-                        'Pembagian Klasis',
-                        'Pembagian Sinode',
-                        'Pembagian Belanja Rutin Gereja',
-                        'Pembagian Program Kerja'
-                    ])
+                return !DB::table('log_pembagian_bulanan')
+                    ->where('tahun', $item->tahun)
+                    ->where('bulan', $item->bulan)
                     ->exists();
+            })
+            ->filter(function ($item) use ($currentMonth, $currentYear) {
+                // hanya tampilkan bulan yang lebih kecil dari bulan terbaru
+                return $item->tahun < $currentYear ||
+                    ($item->tahun == $currentYear && $item->bulan < $currentMonth);
             });
 
-        $daftarAkun = Akun::all();
-        $keuangan = Keuangan::with('akun')->get();
 
+        $daftarAkun = Akun::all();
+        // Di Controller
+        $keuanganModel = new Keuangan();
         if ($tahunDipilih && Schema::hasTable("keuangan_$tahunDipilih")) {
-            $namaTabel = "keuangan_$tahunDipilih";
-        } else {
-            $namaTabel = "keuangan";
+            $keuanganModel->setTable("keuangan_$tahunDipilih");
         }
 
+        $query = $keuanganModel->with('akun');
 
-        $queryTanggal = DB::table($namaTabel);
-        // dd($namaTabel);
         if ($request->filled('dari_tanggal') && $request->filled('sampai_tanggal')) {
             $dari = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dari_tanggal)->format('Y-m-d');
             $sampai = \Carbon\Carbon::createFromFormat('d/m/Y', $request->sampai_tanggal)->format('Y-m-d');
 
-            $queryTanggal->whereBetween('tanggal', [$dari, $sampai]);
-            // if ($akunDipilih) {
-            //     $queryTanggal->where('akun_id', $akunDipilih);
-            // }
-            // dd($queryTanggal);
+            $query->whereBetween('tanggal', [$dari, $sampai]);
         }
 
-        $dataTanggal = $queryTanggal->get();
+        $dataTanggal = $query->get();
 
-        
+
         // $totalKredit = $akun->keuangans()->where('tipe', 'kredit')->sum('jumlah');
         // $totalDebit = $akun->keuangans()->where('tipe', 'debit')->sum('jumlah');
         // $saldo = $totalKredit - $totalDebit;
@@ -683,6 +784,14 @@ class AdminController extends Controller
     {
         $tahun = $request->input('tahun');
         $bulan = $request->input('bulan');
+
+        $existingLog = LogPembagianBulanan::where('tahun', $tahun)
+            ->where('bulan', $bulan)
+            ->first();
+
+        if ($existingLog) {
+            return redirect()->back()->with('error', 'Pembagian untuk bulan ini sudah pernah dilakukan.');
+        }
 
         // Step 1: Ambil total pemasukan (kredit)
         $totalKredit = DB::table('keuangan')
@@ -787,17 +896,10 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Pembagian bulanan berhasil diproses!');
     }
 
-
-
-
-
-
     public function addDaftarKeuanganA()
     {
         return view('admin.add-daftarkeuangan');
     }
-
-
 
     public function postDaftarKeuangan(Request $request)
     {

@@ -23,7 +23,7 @@ class AuthController extends Controller
             if (Auth::user()->role == 'admin') {
                 return redirect('/prokerAdmin')->with('success', ' Selamat Datang ' . $role);
             } elseif (Auth::user()->role == 'user') {
-                return redirect('/prokerUser')->with('success', ' Selamat Datang ' . $role);
+                return redirect('/proker')->with('success', ' Selamat Datang ' . $role);
             } else {
                 return redirect('/')->withErrors(['error' => 'Role tidak valid.']);
             }

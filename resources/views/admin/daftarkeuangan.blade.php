@@ -1,12 +1,42 @@
 @extends('layouts.main')
 @section('title', 'Admin | Add Keuangan')
 @section('content')
+    <style>
+        #datatablesSimple td:nth-child(5),
+        /* Jumlah */
+        #datatablesSimple td:nth-child(7),
+        /* Saldo Awal */
+        #datatablesSimple td:nth-child(8),
+        /* Saldo Akhir */
+        #datatablesSimple th:nth-child(5),
+        /* Header Jumlah */
+        #datatablesSimple th:nth-child(7),
+        /* Header Saldo Awal */
+        #datatablesSimple th:nth-child(8) {
+            /* Header Saldo Akhir */
+            text-align: right !important;
+        }
+    </style>
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4 ">Tabel Daftar Keuangan</h1>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h1>Tabel Daftar Keuangan</h1>
+
+                    <div class="text-end">
+                        <div class="d-flex align-items-center justify-content-end">
+                            <i class="far fa-calendar-alt me-2"></i>
+                            <span id="tanggal">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</span>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-end">
+                            <i class="far fa-clock me-2"></i>
+                            <span id="jam">{{ \Carbon\Carbon::now()->format('HH:mm:ss') }}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <hr class="my-4">
-                <div class="card mb-4 shadow-sm" style="width: 30rem;">
+                <div class="card mb-4 shadow-sm" style="width: 25rem;">
                     <div class="card-header">
                         <p>Filter per tanggal</p>
                     </div>
@@ -62,17 +92,6 @@
                                 @endforeach
                             </ul>
                         </div>
-                        {{-- <form id="filterForm" action="{{ url('/daftarKeuangan') }}" method="GET">
-                            <select name="tahun" id="filterTahun" class="form-select">
-                                <option value="">Pilih Tahun</option>
-                                @foreach ($tahunList as $thn)
-                                    <option value="{{ $thn }}" {{ request('tahun') == $thn ? 'selected' : '' }}>
-                                        Tahun {{ $thn }}
-                                    </option>
-                                @endforeach
-                            </select>
-                                
-                        </form>  --}}
                     </div>
                     <div class="card-body shadow-sm">
                         @if (count($bulanBelumDiproses) > 0)
@@ -83,35 +102,25 @@
                                         $logPembagian = \App\Models\LogPembagianBulanan::where('tahun', $bln->tahun)
                                             ->where('bulan', $bln->bulan)
                                             ->first();
+
+                                        // Tambah 1 bulan untuk label proses pembagian
+                                        $tanggalLabel = \Carbon\Carbon::create($bln->tahun, $bln->bulan)->addMonth();
                                     @endphp
 
                                     @if (!$logPembagian || $logPembagian->status != 'selesai')
-                                        <!-- Hanya tampilkan tombol jika status belum selesai -->
                                         <form action="{{ route('proses.pembagian.bulanan') }}" method="POST"
                                             class="d-inline-block mb-2 me-2">
                                             @csrf
                                             <input type="hidden" name="tahun" value="{{ $bln->tahun }}">
                                             <input type="hidden" name="bulan" value="{{ $bln->bulan }}">
-                                            <button type="submit" class="btn btn-warning">
-                                                Proses Bulan
-                                                {{ \Carbon\Carbon::create($bln->tahun, $bln->bulan)->translatedFormat('F Y') }}
+                                            <button type="button" class="btn btn-warning btn-konfirmasi">
+                                                Proses Pembagian Bulan {{ $tanggalLabel->translatedFormat('F Y') }}
                                             </button>
                                         </form>
                                     @endif
                                 @endforeach
                             </div>
                         @endif
-                        {{-- <form method="GET" action="{{ route('admin.daftarkeuangan') }}">
-                        <select name="akun_id" onchange="this.form.submit()">
-                            <option value="">Semua Akun</option>
-                            @foreach ($daftarAkun as $akun)
-                                <option value="{{ $akun->akun_id }}" {{ request('akun_id') == $akun->akun_id ? 'selected' : '' }}>
-                                    {{ $akun->nama_akun }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <button type="submit">Filter</button>
-                    </form> --}}
 
                         <table id="datatablesSimple" class="table table-bordered shadow-sm">
                             <thead>
@@ -129,23 +138,21 @@
                                     </th>
                                     <th>Jumlah (Rp)</th>
                                     <th>Keterangan</th>
-                                    <th>Saldo Awal</th>
-                                    <th>Saldo Akhir</th>
+                                    <th>Saldo Awal (Rp)</th>
+                                    <th>Saldo Akhir (Rp)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- <p>Total data: {{ dd($dataKeuangan) }}</p> --}}
-                                @forelse ($dataKeuangan as $item)
-                                {{-- {{ dd($dataKeuangan); }} --}}
+                                @forelse ($dataTanggal as $item)
                                     <tr>
                                         <td>{{ $item->akun->kode_akun ?? '-' }}</td>
                                         <td>{{ $item->kode_keuangan }}</td>
-                                        <td>{{ $item->tanggal }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
                                         <td>{{ ucfirst($item->tipe) }}</td>
                                         <td>{{ number_format($item->jumlah ?: 0, 2, ',', '.') }}</td>
                                         <td>{{ $item->keterangan }}</td>
-                                        <td>Rp {{ number_format($item->saldo_awal ?: 0, 2, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($item->saldo_akhir ?: 0, 2, ',', '.') }}</td>
+                                        <td>{{ number_format($item->saldo_awal ?: 0, 2, ',', '.') }}</td>
+                                        <td>{{ number_format($item->saldo_akhir ?: 0, 2, ',', '.') }}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -179,7 +186,15 @@
                                 </div>
                             </div> --}}
 
-                        <p><strong>Total Saldo Keseluruhan :</strong> Rp {{ number_format($totalSaldo, 2, ',', '.') }}
+                        @php
+                            $isMinus = $totalSaldo < 0;
+                        @endphp
+
+                        <p>
+                            <strong>Total Saldo Keseluruhan :</strong>
+                            <span class="{{ $isMinus ? 'text-danger fw-bold' : 'text-success fw-bold' }}">
+                                Rp {{ number_format($totalSaldo, 2, ',', '.') }}
+                            </span>
                         </p>
                         <p><strong>Total Kredit :</strong> Rp {{ number_format($totalKredit, 2, ',', '.') }}</p>
                         <p><strong>Total Debit Keuangan Umum :</strong> Rp
@@ -193,6 +208,9 @@
                         </button>
                         <a href="{{ route('download.keuangan') }}" class="btn btn-dark">
                             <i class="bi bi-download"></i>&nbsp; Download Keuangan
+                        </a>
+                        <a href="{{ route('keuangan.exportpdf') }}" class="btn btn-danger">
+                            Export PDF
                         </a>
                     </div>
                 </div>
@@ -213,16 +231,6 @@
             }
         }
     </script>
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterTahun = document.getElementById('filterTahun');
-            if (filterTahun) {
-                filterTahun.addEventListener('change', function() {
-                    document.getElementById('filterForm').submit();
-                });
-            }
-        });
-    </script> --}}
     <script>
         $(function() {
             $("#dariTanggal, #sampaiTanggal").datepicker({
@@ -237,6 +245,43 @@
             document.getElementById('dariTanggal').value = '';
             document.getElementById('sampaiTanggal').value = '';
             document.getElementById('filterForm').submit();
+        });
+    </script>
+    <script>
+        function updateJam() {
+            const waktu = new Date();
+            const jam = waktu.getHours().toString().padStart(2, '0');
+            const menit = waktu.getMinutes().toString().padStart(2, '0');
+            const detik = waktu.getSeconds().toString().padStart(2, '0');
+            document.getElementById('jam').textContent = `${jam}:${menit}:${detik}`;
+        }
+
+        setInterval(updateJam, 1000);
+        updateJam(); // jalankan langsung saat halaman dimuat
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const buttons = document.querySelectorAll('.btn-konfirmasi');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const form = this.closest('form');
+
+                    Swal.fire({
+                        title: 'Yakin mau proses pembagian?',
+                        text: "Pembagian keuangan bulan ini akan dilakukan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, proses sekarang!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
         });
     </script>
     @include('admin.add-daftarkeuangan')

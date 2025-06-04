@@ -1,6 +1,18 @@
 @extends('layouts.main')
 @section('title', 'Admin | add Proker')
 @section('content')
+<style>
+        #datatablesSimple td:nth-child(7),
+        /* anggaran digunakan */
+        #datatablesSimple td:nth-child(8),
+        /* tambah kebijakan */
+        #datatablesSimple th:nth-child(7),
+        /* Header anggaran digunakan */
+        #datatablesSimple th:nth-child(8) {
+            /* Header tambah kebijakan */
+            text-align: right !important;
+        }
+    </style>
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4 ">
@@ -46,8 +58,8 @@
                                     <th>Tanggal Mulai</th>
                                     <th>Tanggal Selesai</th> --}}
                                     <th>Keterangan</th>
-                                    <th>Anggaran Digunakan</th>
-                                    <th>Dana Kebijakan</th>
+                                    <th>Anggaran Digunakan (Rp)</th>
+                                    <th>Dana Kebijakan (Rp)</th>
                                     <th>Tahun</th>
                                     {{-- <th>Status</th> --}}
                                     <th>Ubah</th>
@@ -69,8 +81,8 @@
                                         {{-- <td>{{ $item->tanggal_mulai }}</td> --}}
                                         {{-- <td>{{ $item->tanggal_selesai }}</td> --}}
                                         <td>{{ $item->keterangan }}</td>
-                                        <td>Rp {{ number_format($item->anggaran_digunakan, 2, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($item->tambahan_dana_kebijakan, 2, ',', '.') }}</td>
+                                        <td>{{ number_format($item->anggaran_digunakan, 2, ',', '.') }}</td>
+                                        <td>{{ number_format($item->tambahan_dana_kebijakan, 2, ',', '.') }}</td>
                                         <td>{{ $item->tahun }}</td>
                                         {{-- <td>{{ $item->status }}</td> --}}
                                         <td>

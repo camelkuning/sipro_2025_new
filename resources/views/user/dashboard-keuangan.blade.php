@@ -95,8 +95,95 @@
                         </div>
                     </div>
                 </div>
+
+
+                <hr class="my-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Tabel Pencatatan Keuangan
+                        @if (request('dari_tanggal') && request('sampai_tanggal'))
+                            <p><strong>Periode:</strong> {{ request('dari_tanggal') }} - {{ request('sampai_tanggal') }}</p>
+                        @endif
+                    </div>
+
+                    <div class="card-body">
+                        <table id="datatablesSimple" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Keterangan</th>
+                                    <th>Kode Keuangan</th>
+                                    <th>
+                                        Tipe
+                                        <select id="filter-tipe" style="width: auto; float: right;">
+                                            <option value="">Semua</option>
+                                            <option value="debit">Debit</option>
+                                            <option value="kredit">Kredit</option>
+                                        </select>
+                                    </th>
+                                    <th>Jumlah</th>
+                                    <th>Saldo Akhir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($dataTanggal as $data)
+                                    <tr>
+                                        <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d M Y') }}</td>
+                                        <td>{{ $data->keterangan }}</td>
+                                        <td>{{ $data->kode_keuangan }}</td>
+                                        <td>{{ ucfirst($data->tipe) }}</td>
+                                        <td>Rp{{ number_format($data->jumlah, 0, ',', '.') }}</td>
+                                        <td>Rp{{ number_format($data->saldo_akhir, 0, ',', '.') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6">Tidak ada data keuangan tersedia.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        <div class="row mt-2">
+                            <div class="col-md-3"> {{-- Ukuran card filter setengah baris --}}
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <form method="GET" action="{{ route('user.dashboard.keuangan') }}" class="mb-3"
+                                            id="filterForm">
+                                            <div class="mb-3">
+                                                <label for="dari_tanggal" class="form-label">Dari Tanggal</label>
+                                                <input type="text" name="dari_tanggal" class="form-control"
+                                                    id="dariTanggal" placeholder="dd/mm/yyyy" autocomplete="off"
+                                                    value="{{ request('dari_tanggal') }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="sampai_tanggal" class="form-label">Sampai Tanggal</label>
+                                                <input type="text" name="sampai_tanggal" class="form-control"
+                                                    id="sampaiTanggal" placeholder="dd/mm/yyyy" autocomplete="off"
+                                                    value="{{ request('sampai_tanggal') }}">
+                                            </div>
+                                            <div>
+                                                <button type="submit" class="btn btn-primary me-2">🔍 Tampilkan</button>
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    id="resetTanggal">🔄 Reset Tanggal</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6 d-flex align-items-start">
+                            <a href="{{ route('download.keuangan') }}" class="btn btn-dark ms-md-auto mt-2 mt-md-0">
+                                <i class="bi bi-download"></i>&nbsp; Download Excel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </main>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('filterTahun').addEventListener('change', function() {
@@ -139,4 +226,5 @@
         setInterval(updateJam, 1000);
         updateJam(); // jalankan langsung saat halaman dimuat
     </script>
+
 @endsection

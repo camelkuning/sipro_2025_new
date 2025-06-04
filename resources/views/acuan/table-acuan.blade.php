@@ -12,7 +12,7 @@
                         <hr class="my-4">
                         <form method="POST" action="{{ route('aproveKeuangan') }}" id="formSimpanKeuangan">
                             @csrf
-                            <button type="button" class="btn btn-success mt-3" id="btnKonfirmasiSimpan">Simpan</button>
+                            <button type="button" class="btn btn-success mt-3" id="btnKonfirmasiSimpan">Arsipkan</button>
                         </form>
 
                     </div>

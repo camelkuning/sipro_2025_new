@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('program_kerja_pengeluaran', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('program_kerja_id');
-            $table->date('tanggal');
-            $table->string('keterangan');
-            $table->bigInteger('jumlah');
-            $table->timestamps();
+        // Schema::create('program_kerja_pengeluaran', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->unsignedBigInteger('program_kerja_id');
+        //     $table->date('tanggal');
+        //     $table->string('keterangan');
+        //     $table->bigInteger('jumlah');
+        //     $table->timestamps();
 
-            $table->foreign('program_kerja_id')->references('id')->on('program_kerja')->onDelete('cascade');
-        });
+        //     $table->foreign('program_kerja_id')->references('id')->on('program_kerja')->onDelete('cascade');
+        // });
     }
 
     /**

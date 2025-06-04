@@ -20,7 +20,7 @@ class CheckRole
     {
         // Cek apakah user sudah login
         if (!Auth::check()) {
-            return redirect('/login')->with('error', 'Harap login terlebih dahulu');
+            return redirect('/')->with('error', 'Harap login terlebih dahulu');
         }
 
         // Cek apakah role user sesuai
