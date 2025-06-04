@@ -206,9 +206,9 @@
                             data-bs-target="#modalTambahKeuangan">
                             <i class="bi bi-plus-square"></i>&nbsp; Add Keuangan
                         </button>
-                        <a href="{{ route('download.keuangan') }}" class="btn btn-dark">
+                        {{-- <a href="{{ route('download.keuangan') }}" class="btn btn-dark">
                             <i class="bi bi-download"></i>&nbsp; Download Keuangan
-                        </a>
+                        </a> --}}
                         <a href="{{ route('keuangan.exportpdf') }}" class="btn btn-danger">
                             Export PDF
                         </a>

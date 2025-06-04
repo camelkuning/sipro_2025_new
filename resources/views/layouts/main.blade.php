@@ -11,27 +11,7 @@
 
     <title>@yield('title')</title>
 
-    <script>
-        (function(m, a, z, e) {
-            var s, t;
-            try {
-                t = m.sessionStorage.getItem('maze-us');
-            } catch (err) {}
 
-            if (!t) {
-                t = new Date().getTime();
-                try {
-                    m.sessionStorage.setItem('maze-us', t);
-                } catch (err) {}
-            }
-
-            s = a.createElement('script');
-            s.src = z + '?apiKey=' + e;
-            s.async = true;
-            a.getElementsByTagName('head')[0].appendChild(s);
-            m.mazeUniversalSnippetApiKey = e;
-        })(window, document, 'https://snippet.maze.co/maze-universal-loader.js', 'd1245141-4499-4275-83f4-724c32518c77');
-    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />

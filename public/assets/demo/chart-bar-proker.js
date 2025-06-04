@@ -43,21 +43,29 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     },
                     scales: {
-                        x: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Nama Program Kerja'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                
-                                text: 'Anggaran (Rp)'
-                            }
-                        }
-                    }
+    x: {
+        beginAtZero: true,
+        title: {
+            display: true,
+            text: 'Nama Program Kerja',
+            font: {
+                size: 16, // Ukuran font sumbu X
+                weight: 'bold' // Opsional, bisa dihilangkan
+            }
+        }
+    },
+    y: {
+        title: {
+            display: true,
+            text: 'Anggaran (Rp)',
+            font: {
+                size: 16, // Ukuran font sumbu Y
+                weight: 'bold' // Opsional, bisa dihilangkan
+            }
+        }
+    }
+}
+
                 }
             });
         })

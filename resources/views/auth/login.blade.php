@@ -50,9 +50,11 @@
                                                 <label class="form-check-label" for="inputRememberPassword">Remember
                                                     Password</label>
                                             </div>
-                                            <div class="d-flex align-items-center justify-content-center mt-4 mb-0">
-                                                <button type="submit" class="btn btn-primary">Login</button>
+                                            <div class="mt-4 mb-0 w-100">
+                                                <button type="submit"
+                                                    class="btn btn-primary btn-md w-100">Login</button>
                                             </div>
+
                                         </form>
                                     </div>
                                 </div>

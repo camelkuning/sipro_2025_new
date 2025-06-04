@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('programkerja.update', $item->id)  }}" method="POST">
+                <form action="{{ route('programkerja.update', $item->id) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -67,7 +67,7 @@
                             required>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3" hidden>
                         <label for="anggaran_digunakan" class="form-label">Anggaran Digunakan</label>
                         <input type="text" class="form-control format-uang" name="anggaran_digunakan"
                             value="{{ $item->anggaran_digunakan }}" required>
@@ -81,11 +81,10 @@
 
                     <div class="mb-3">
                         <label for="tahun" class="form-label">Tahun</label>
-                        <input type="text" class="form-control" name="tahun" value="{{ $item->tahun }}"
-                            required>
+                        <input type="text" class="form-control" name="tahun" value="{{ $item->tahun }}" required>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3" hidden>
                         <label for="status" class="form-label">Status</label>
                         <select class="form-select" name="status" required>
                             <option value="aktif" {{ $item->status == 'aktif' ? 'selected' : '' }}>Aktif</option>
@@ -93,8 +92,11 @@
                             </option>
                         </select>
                     </div>
-
-                    <button type="submit" class="btn btn-dark">Simpan Perubahan</button>
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-dark">Simpan Perubahan</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

@@ -49,7 +49,7 @@
                     </div>
                 @endif
                 @if (Auth::check() && Auth::user()->role == 'admin')
-                    <hr class="my-2 border-white opacity-50">
+                    <hr class="my-1 border-white opacity-50">
                     <div class="sb-sidenav-menu-heading">Daftar Pengeluaran</div>
                     <a class="nav-link fw-bold d-flex align-items-center" data-bs-toggle="collapse" href="#daftarKerja"
                         role="button">
@@ -78,7 +78,7 @@
                             </li>
                         </ul>
                     </div>
-                    <hr class="my-2 border-white opacity-50">
+                    <hr class="my-1 border-white opacity-50">
 
                     <div class="sb-sidenav-menu-heading">Daftar User</div>
                     <a class="nav-link fw-bold d-flex align-items-center" data-bs-toggle="collapse" href="#daftarUser"
