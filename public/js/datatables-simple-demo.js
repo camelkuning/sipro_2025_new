@@ -7,7 +7,7 @@ window.addEventListener('DOMContentLoaded', event => {
         const dataTable = new simpleDatatables.DataTable(datatablesSimple, {
             // pdf export
             
-            perPage: 5,
+            perPage: 10,
             perPageSelect: [5, 10, 20, 50],
             searchable: true,
             fixedHeight: true,

@@ -52,8 +52,9 @@ class AdminController extends Controller
         $tahunIni = now()->year;
 
         $jumlahAktif = ProgramKerja::where('status', 'aktif')->count();
-        $jumlahSelesai = ProgramKerja::where('status', 'selesai')->count(); //buat nanti ulang tabelnya biar bisa ada ini 
+        $jumlahSelesai = ProgramKerja::where('status', 'diarsipkan')->count(); //buat nanti ulang tabelnya biar bisa ada ini 
         $jumlahDigunakan = ProgramKerja::where('status', 'aktif')->sum('anggaran_digunakan');
+        $jumlahKebijakan = ProgramKerja::where('status', 'aktif')->sum('tambahan_dana_kebijakan');
 
         $budgetData = ProgramKerjaBudget::whereNotNull('tahun_budget')
             ->orderBy('tahun_budget', 'desc')
@@ -69,29 +70,48 @@ class AdminController extends Controller
             ->whereNotNull('tanggal_mulai')
             ->get();
 
-        $colors = ['#1abc9c', '#3498db', '#f39c12', '#9b59b6', '#e74c3c'];
+        $colorMap = [
+            'Persekutuan Anak Muda' => '#10b981', // Hijau
+            'Persekutuan Anak dan Remaja' => '#f59e0b',        // Kuning orange
+            'Persekutuan Kaum Bapak' => '#3b82f6',           // Biru
+            'Persekutuan Wanita' => '#8b5cf6',            // Ungu
+            'Majelis Jemaat' => '#e74c3c',               // Merah
+        ];
         $jadwalProker = ProgramKerja::all();
-        $events = $jadwalProker->map(function ($item, $index) use ($colors) {
+
+        $events = $jadwalProker->map(function ($item) use ($colorMap) {
+            $warna = $colorMap[$item->komisi_program_kerja] ?? '#6b7280'; // abu-abu default
+
             return [
                 'title' => $item->komisi_program_kerja,
                 'start' => \Carbon\Carbon::parse($item->tanggal_mulai)->toIso8601String(),
                 'end' => $item->tanggal_mulai != $item->tanggal_selesai
                     ? \Carbon\Carbon::parse($item->tanggal_selesai)->addDay()->toIso8601String()
                     : null,
-                'color' => $colors[$index % count($colors)],
+                'color' => $warna,
                 'textColor' => '#fff',
-
                 'nama_program_kerja' => $item->nama_program_kerja,
             ];
         });
 
 
-        return view('admin.dashboard-proker', compact('tahunIni', 'jumlahAktif', 'jumlahSelesai', 'budget_berjalan', 'alokasi_tahun_depan', 'tahunBudget', 'jumlahDigunakan', 'jadwalProker', 'budgetData', 'alokasiData', 'events'));
+        return view('admin.dashboard-proker', compact('tahunIni', 'jumlahAktif', 'jumlahSelesai', 'budget_berjalan', 'alokasi_tahun_depan', 'tahunBudget', 'jumlahDigunakan', 'jadwalProker', 'budgetData', 'alokasiData', 'events', 'jumlahKebijakan'));
     }
 
     public function dashboardKeuanganA(Request $request)
     {
         // Ambil daftar tahun dari tabel keuangan arsip
+        $acuan = DB::table('acuan_pembagian')
+            ->get()
+            ->keyBy('kategori');
+        // dd($acuan);
+        $sinode = $acuan['Sinode']->persentase ?? 0;
+        $klasis = $acuan['Klasis']->persentase ?? 0;
+        $program = $acuan['Program Kerja']->persentase ?? 0;
+        $belanja = $acuan['Belanja Rutin Gereja']->persentase ?? 0;
+        //  dd($sinode, $klasis, $program, $belanja);    
+
+
         $tables = DB::select("SHOW TABLES LIKE 'keuangan_%'");
         $tahunList = collect($tables)->map(function ($table) {
             $tableName = collect($table)->first();
@@ -188,7 +208,11 @@ class AdminController extends Controller
             'totalSaldo',
             'debitProker',
             'tahunList',
-            'tahunDipilih'
+            'tahunDipilih',
+            'sinode',
+            'klasis',
+            'program',
+            'belanja'
         ));
     }
 
@@ -339,11 +363,18 @@ class AdminController extends Controller
 
         $alokasi_tahun_depan = $alokasiData ? $alokasiData->alokasi_tahun_depan : 0;
 
+        // dd([
+        //     'tahunDipilih' => $tahunDipilih,
+        //     'data' => $programKerja,
+        //     'namaTabel' => $tahunDipilih ? "program_kerja_$tahunDipilih" : 'program_kerja',
+        // ]);
+
         return view('admin.daftarproker', compact('programKerja', 'alokasi_tahun_depan', 'budget_berjalan', 'tahunIni', 'tahunList', 'tahunDipilih', 'tahunBudget', 'daftarAkun'));
     }
 
     public function store(Request $request)
     {
+
         $request->validate([
             'akun_id' => 'required|exists:akun,id',
             'kode_program_kerja' => 'unique:program_kerja',
@@ -357,7 +388,7 @@ class AdminController extends Controller
             'anggaran_digunakan' => 'nullable|numeric',
             'tambahan_dana_kebijakan' => 'nullable|numeric',
             'tahun' => 'required|integer',
-            'status' => 'required|in:aktif,diarsipkan',
+            'status' => 'required|in:aktif,selesai',
 
         ]);
 
@@ -390,7 +421,8 @@ class AdminController extends Controller
 
         $tahunIni = date('Y');
 
-        $budget = ProgramKerjaBudget::where('tahun_budget', $tahunIni)->first();
+        // $budget = ProgramKerjaBudget::where('tahun_budget', $tahunIni)->first();
+        $budget = ProgramKerjaBudget::first();
 
         $anggaranDigunakan = (int) ($request->anggaran_digunakan ?? 0);
         $tambahanDanaKebijakan = (int) ($request->tambahan_dana_kebijakan ?? 0);
@@ -422,7 +454,6 @@ class AdminController extends Controller
                 'saldo_awal' => $saldoAwal,
                 'saldo_akhir' => $saldoAkhir,
                 'keterangan' => 'Anggaran Program Kerja: ' . $request->nama_program_kerja,
-                'waktu_input' => now(),
             ]);
         }
 
@@ -476,7 +507,7 @@ class AdminController extends Controller
             'keterangan' => 'required|string',
             'anggaran_digunakan' => 'required|numeric',
             'tahun' => 'required|digits:4',
-            'status' => 'required|in:aktif,nonaktif',
+            'status' => 'required|in:aktif,selesai',
 
         ]);
 
@@ -591,89 +622,50 @@ class AdminController extends Controller
 
 
         // Ambil semua tabel yang memiliki prefix 'keuangan_'
+        // 🔍 Ambil semua tabel keuangan_YYYY
         $tables = DB::select("SHOW TABLES LIKE 'keuangan_%'");
-
         $tahunList = collect($tables)->map(function ($table) {
-            $tableName = collect($table)->first();
-            return str_replace('keuangan_', '', $tableName);
+            return str_replace('keuangan_', '', collect($table)->first());
         })->sortDesc()->values();
 
+        // 🏷 Tahun dipilih (jika ada)
         $tahunDipilih = $request->tahun;
-        // dd($tahunDipilih);
-        // dd($tahunDipilih);
-        if ($tahunDipilih) {
-            $namaTabel = "keuangan_$tahunDipilih";
-            if (Schema::hasTable($namaTabel)) {
-                $dataKeuangan = DB::table($namaTabel)->orderBy('tanggal', 'asc')
-                    // ->orderBy('urutan', 'asc') // urutkan juga berdasarkan urutan
-                    ->get();
-                // dd($dataKeuangan);
+        $keuanganModel = new Keuangan();
 
-                $totalKredit = DB::table($namaTabel)
-                    ->where('tipe', 'kredit')
-                    ->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])
-                    ->sum('jumlah');
-
-                $totalDebit = DB::table($namaTabel)
-                    ->where('tipe', 'debit')
-                    ->where('kode_keuangan', 'not like', 'PROKER%')
-                    ->sum('jumlah');
-                $totalSaldo = DB::table($namaTabel)
-                    ->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])
-                    ->orderByDesc('tanggal')
-                    ->orderByDesc('id')
-                    ->value('saldo_akhir') ?? 0;
-
-                $debitProker = DB::table($namaTabel)
-                    ->where('tipe', 'debit')
-                    ->where('kode_keuangan', 'like', 'PROKER%')
-                    ->sum('jumlah');
-            } else {
-                $dataKeuangan = collect();
-                $totalKredit = 0;
-                $totalDebit = 0;
-                $totalSaldo = 0;
-                // $totalKeseluruhan = 0;
-                $debitProker = 0;
-            }
+        if ($tahunDipilih && Schema::hasTable("keuangan_$tahunDipilih")) {
+            $keuanganModel->setTable("keuangan_$tahunDipilih");
         } else {
-            if (Schema::hasTable('keuangan')) {
-                $dataKeuangan = DB::table('keuangan')
-                    ->orderBy('tanggal', 'asc')
-                    // ->orderBy('urutan', 'asc') // urutkan juga berdasarkan urutan
-                    ->get();
-
-                $totalKredit = DB::table('keuangan')
-                    ->where('tipe', 'kredit')
-                    ->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])
-                    ->sum('jumlah');
-
-                $totalDebit = DB::table('keuangan')
-                    ->where('tipe', 'debit')
-                    ->where('kode_keuangan', 'not like', 'PROKER%')
-                    ->sum('jumlah');
-
-                $totalSaldo = DB::table('keuangan')
-                    ->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])
-                    ->orderByDesc('tanggal')
-                    ->orderByDesc('id')
-                    ->value('saldo_akhir') ?? 0;
-
-                $debitProker = DB::table('keuangan')
-                    ->where('tipe', 'debit')
-                    ->where('kode_keuangan', 'like', 'PROKER%')
-                    ->sum('jumlah');
-            } else {
-                $dataKeuangan = collect();
-                $totalKredit = 0;
-                $totalDebit = 0;
-                $totalSaldo = 0;
-                $debitProker = 0;
-            }
             $tahunDipilih = "Keuangan Sekarang";
+            $keuanganModel->setTable("keuangan");
         }
 
-        // 💡 Ambil bulan terakhir dari keuangan utama (bukan arsip)
+
+        // Query data keuangan dengan relasi akun
+        // $query = $keuanganModel->with('akun')->orderBy('tanggal', 'asc');
+        $query = $keuanganModel->orderBy('tanggal', 'asc');
+
+        if ($request->filled('dari_tanggal') && $request->filled('sampai_tanggal')) {
+            $dari = Carbon::createFromFormat('d/m/Y', $request->dari_tanggal)->format('Y-m-d');
+            $sampai = Carbon::createFromFormat('d/m/Y', $request->sampai_tanggal)->format('Y-m-d');
+            $query->whereBetween('tanggal', [$dari, $sampai]);
+        }
+
+        $dataKeuangan = $query->get();
+
+        //  Statistik Keuangan
+        $totalKredit = (clone $keuanganModel)->where('tipe', 'kredit')
+            ->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])->sum('jumlah');
+
+        $totalDebit = (clone $keuanganModel)->where('tipe', 'debit')
+            ->where('kode_keuangan', 'not like', 'PROKER%')->sum('jumlah');
+
+        $totalSaldo = (clone $keuanganModel)->whereNotIn('keterangan', ['Alokasi Dana Belanja Gereja'])
+            ->orderByDesc('tanggal')->orderByDesc('id')->value('saldo_akhir') ?? 0;
+
+        $debitProker = (clone $keuanganModel)->where('tipe', 'debit')
+            ->where('kode_keuangan', 'like', 'PROKER%')->sum('jumlah');
+
+        //  Cek bulan terakhir dan status pembagian
         $lastKredit = DB::table('keuangan')->where('tipe', 'kredit')->orderBy('tanggal', 'desc')->first();
 
         $bulanTerakhir = null;
@@ -686,79 +678,71 @@ class AdminController extends Controller
             $tahunTerakhir = $tanggal->year;
 
             $sudahDibagi = LogPembagianBulanan::where('bulan', $bulanTerakhir)
-                ->where('tahun', $tahunTerakhir)
-                ->exists();
+                ->where('tahun', $tahunTerakhir)->exists();
         }
 
         $bulanLalu = Carbon::now()->subMonth();
         $sudahDiproses = LogPembagianBulanan::where('tahun', $bulanLalu->year)
-            ->where('bulan', $bulanLalu->month)
-            ->exists();
+            ->where('bulan', $bulanLalu->month)->exists();
 
         $tahunIni = now()->year;
 
-        // Ambil semua bulan (unik) dari data keuangan tipe 'kredit' di tahun ini
         $bulanUnik = DB::table('keuangan')
-            ->where('tipe', 'kredit')
-            ->whereYear('tanggal', $tahunIni)
-            ->selectRaw('MONTH(tanggal) as bulan')
-            ->distinct()
-            ->pluck('bulan');
+            ->where('tipe', 'kredit')->whereYear('tanggal', $tahunIni)
+            ->selectRaw('MONTH(tanggal) as bulan')->distinct()->pluck('bulan');
 
         $sudah12Bulan = $bulanUnik->count() === 12;
 
+        // 📆 Data bulan yang belum diproses
         $latestKredit = DB::table('keuangan')
-            ->where('tipe', 'kredit')
             ->orderBy('tanggal', 'desc')
             ->first();
 
-        $currentMonth = Carbon::parse($latestKredit->tanggal)->month;
-        $currentYear = Carbon::parse($latestKredit->tanggal)->year;
+
+        $currentMonth = null;
+        $currentYear = null;
+
+        if ($latestKredit) {
+            $currentMonth = Carbon::parse($latestKredit->tanggal)->month;
+            $currentYear = Carbon::parse($latestKredit->tanggal)->year;
+        }
 
         $bulanBelumDiproses = DB::table('keuangan')
             ->selectRaw('YEAR(tanggal) as tahun, MONTH(tanggal) as bulan')
-            ->where('tipe', 'kredit')
-            ->groupBy('tahun', 'bulan')
-            ->get()
+            ->where('tipe', 'kredit')->groupBy('tahun', 'bulan')->get()
             ->filter(function ($item) {
                 return !DB::table('log_pembagian_bulanan')
-                    ->where('tahun', $item->tahun)
-                    ->where('bulan', $item->bulan)
-                    ->exists();
+                    ->where('tahun', $item->tahun)->where('bulan', $item->bulan)->exists();
             })
             ->filter(function ($item) use ($currentMonth, $currentYear) {
-                // hanya tampilkan bulan yang lebih kecil dari bulan terbaru
+                if (is_null($currentMonth) || is_null($currentYear)) {
+                    return true;
+                }
                 return $item->tahun < $currentYear ||
                     ($item->tahun == $currentYear && $item->bulan < $currentMonth);
             });
 
-
         $daftarAkun = Akun::all();
-        // Di Controller
-        $keuanganModel = new Keuangan();
-        if ($tahunDipilih && Schema::hasTable("keuangan_$tahunDipilih")) {
-            $keuanganModel->setTable("keuangan_$tahunDipilih");
-        }
 
-        $query = $keuanganModel->with('akun');
+        // dd($dataKeuangan);
+        //     dd(['dataTanggal' => $dataTanggal,
+        //         'dataKeuangan' => $dataKeuangan,
 
-        if ($request->filled('dari_tanggal') && $request->filled('sampai_tanggal')) {
-            $dari = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dari_tanggal)->format('Y-m-d');
-            $sampai = \Carbon\Carbon::createFromFormat('d/m/Y', $request->sampai_tanggal)->format('Y-m-d');
-
-            $query->whereBetween('tanggal', [$dari, $sampai]);
-        }
-
-        $dataTanggal = $query->get();
+        // ]);
 
 
+        // dd([
+        //     'tahunDipilih' => $tahunDipilih,
+        //     'data' => $dataKeuangan->count(),
+        //     'namaTabel' => $tahunDipilih ? "keuangan_$tahunDipilih" : 'keuangan',
+        // ]);
         // $totalKredit = $akun->keuangans()->where('tipe', 'kredit')->sum('jumlah');
         // $totalDebit = $akun->keuangans()->where('tipe', 'debit')->sum('jumlah');
         // $saldo = $totalKredit - $totalDebit;
 
 
         return view('admin.daftarkeuangan', compact(
-            'dataTanggal',
+            // 'dataTanggal',
             'dataKeuangan',
             'totalSaldo',
             'totalKredit',
@@ -955,14 +939,15 @@ class AdminController extends Controller
     }
 
 
-    public function downloadKeuangan()
-    {
-        return Excel::download(new KeuanganExport, 'laporan_keuangan.xlsx');
-    }
+    // public function downloadKeuangan()
+    // {
+    //     return Excel::download(new KeuanganExport, 'laporan_keuangan.xlsx');
+    // }
 
 
     public function aproveKeuangan()
     {
+        //=========================arsipkan keuangan=================================//
         $tahun = now()->year; // agar tahun otomatis sesuai tahun di submit
         // $tahun = 2024; // ini untuk Ganti tahun sesuai kebutuhan (misal: 2024)
         $namaTabel = 'keuangan_' . $tahun;
@@ -1047,9 +1032,9 @@ class AdminController extends Controller
                 'updated_at' => now(),
             ]);
         }
-        DB::table('program_kerja')->where('tahun', $tahun)->delete();
+        DB::table('program_kerja')->truncate();
 
-        //=========================arsipkan proker=================================//
+        //=========================arsipkan budget dan alokasi=================================//
         $tahunIni = date('Y');
 
         $programBudget = ProgramKerjaBudget::where('tahun_alokasi', $tahun + 1)->first();
@@ -1059,9 +1044,44 @@ class AdminController extends Controller
             $programBudget->alokasi_tahun_depan = 0;
 
             $programBudget->tahun_budget = $tahun += 1;
-            $programBudget->tahun_alokasi = $tahun += 1; //sebenanrya ini bisa otomatis tahunnya, untuk keperluan testing dan ujian makanya dibuat begini
+            $programBudget->tahun_alokasi = $tahun += 1;
             $programBudget->save();
+            //sebenanrya ini bisa otomatis tahunnya, untuk keperluan testing dan ujian makanya dibuat agar punya tahun yang sama dengan budget berjalan
         }
+
+        //=========================arsipkan akun=================================//
+
+        // $namaTabelAkun = 'akun_' . $tahun;
+
+        // // Cek apakah tabel akun_{tahun} sudah ada
+        // if (!Schema::hasTable($namaTabelAkun)) {
+        //     Schema::create($namaTabelAkun, function (Blueprint $table) {
+        //         $table->id();
+        //         $table->string('kode_akun');
+        //         $table->string('nama_akun');
+        //         $table->string('tipe_akun');
+        //         $table->text('keterangan')->nullable();
+        //         $table->timestamps();
+        //     });
+        // }
+
+        // // Ambil data dari tabel akun
+        // $dataAkun = DB::table('akun')->get();
+
+        // // Insert data akun ke tabel arsip akun_{tahun}
+        // foreach ($dataAkun as $akun) {
+        //     DB::table($namaTabelAkun)->insert([
+        //         'kode_akun' => $akun->kode_akun,
+        //         'nama_akun' => $akun->nama_akun,
+        //         'tipe_akun' => $akun->tipe_akun,
+        //         'keterangan' => $akun->keterangan,
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]);
+        // }
+        // DB::table('akun')->truncate();
+
+        DB::table('log_pembagian_bulanan')->truncate();
 
 
         return redirect('/daftarKeuangan')->with('success', 'Data keuangan sudah diarsipkan! dan budget berjalan sudah diperbarui.');

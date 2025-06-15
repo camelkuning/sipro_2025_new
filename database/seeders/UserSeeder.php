@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'nama_lengkap' => 'Gamaliel Lexi',
-                'komisi' => 'pam',
+                'komisi' => 'Persekutuan Anak Muda',
                 'role' => 'user',
                 'username' => 'pamviadolorosa',
                 'password' => Hash::make('22222222'),

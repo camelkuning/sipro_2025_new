@@ -44,12 +44,12 @@
                                                     name="password" placeholder="Password" required />
                                                 <label for="inputPassword">Password</label>
                                             </div>
-                                            <div class="form-check mb-3">
+                                            {{-- <div class="form-check mb-3">
                                                 <input class="form-check-input" id="inputRememberPassword"
                                                     type="checkbox" name="remember" />
                                                 <label class="form-check-label" for="inputRememberPassword">Remember
                                                     Password</label>
-                                            </div>
+                                            </div> --}}
                                             <div class="mt-4 mb-0 w-100">
                                                 <button type="submit"
                                                     class="btn btn-primary btn-md w-100">Login</button>

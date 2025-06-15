@@ -68,7 +68,12 @@
                         <label for="inkonveksional" class="form-label">Pendapatan Inkonvensional</label>
                         <input type="text" class="form-control format-uang" id="inkonveksional" name="inkonveksional" placeholder="Masukkan jumlah" required>
                     </div> --}}
-                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-center">
+                            <button type="submit" class="btn btn-success">Simpan</button>
+                        </div>
+                    </div>
+                    
 
                 </form>
                 {{-- {{ dd(request()->all()) }} --}}

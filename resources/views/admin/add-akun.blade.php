@@ -1,5 +1,4 @@
-<div class="modal fade" id="modalTambahAkun" tabindex="-1" aria-labelledby="modalTambahAkunLabel"
-    aria-hidden="true">
+<div class="modal fade" id="modalTambahAkun" tabindex="-1" aria-labelledby="modalTambahAkunLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -31,7 +30,11 @@
                         <input type="text" class="form-control" id="keterangan" name="keterangan"
                             placeholder="Masukkan keterangan program kerja" required>
                     </div>
-                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-center">
+                            <button type="submit" class="btn btn-success">Simpan</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

@@ -1,6 +1,22 @@
 @extends('layouts.main')
-@section('title', 'Admin | Keuangan')
+@section('title', 'User | Dashboard Keuangan')
 @section('content')
+<style>
+        #datatablesSimple td:nth-child(5),
+        /* Jumlah */
+        #datatablesSimple td:nth-child(7),
+        /* Saldo Awal */
+        #datatablesSimple td:nth-child(8),
+        /* Saldo Akhir */
+        #datatablesSimple th:nth-child(5),
+        /* Header Jumlah */
+        #datatablesSimple th:nth-child(7),
+        /* Header Saldo Awal */
+        #datatablesSimple th:nth-child(8) {
+            /* Header Saldo Akhir */
+            text-align: right !important;
+        }
+    </style>
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
@@ -38,7 +54,7 @@
                         <div class="card border-0 text-white card-hover" style="background-color: #1E90FF;">
                             {{-- Dodger Blue --}}
                             <div class="card-body">
-                                <h6 class="card-title">Total Kredit</h6>
+                                <h6 class="card-title">Total Kredit Keuangan Umum</h6>
                                 <h5 class="fw-bold">
                                     Rp {{ number_format($totalKredit, 2, ',', '.') }}
                                 </h5>
@@ -73,47 +89,123 @@
                     </div>
                 </div>
 
-                <div class="row chart-container">
+                <div class="row">
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card border-0 text-white card-hover" style="background-color: #9E9D24;">
+                            {{-- Light Sea Green --}}
+                            <div class="card-body">
+                                <h6 class="card-title">Persentase Pembagian Ke Sinode</h6>
+                                <h5 class="fw-bold text-center">
+                                    {{ $sinode }}%
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card border-0 text-white card-hover" style="background-color: #607D8B;">
+                            {{-- Light Sea Green --}}
+                            <div class="card-body">
+                                <h6 class="card-title">Persentase Pembagian Ke Klasis</h6>
+                                <h5 class="fw-bold text-center">
+                                    {{ $klasis }}%
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card border-0 text-white card-hover" style="background-color: #E91E63;">
+                            {{-- Light Sea Green --}}
+                            <div class="card-body">
+                                <h6 class="card-title">Persentase Pembagian Ke Program Kerja</h6>
+                                <h5 class="fw-bold text-center">
+                                    {{ $program }}%
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card border-0 text-white card-hover" style="background-color: #795548;">
+                            {{-- Light Sea Green --}}
+                            <div class="card-body">
+                                <h6 class="card-title">Persentase Pembagian Ke Belanja Rutin</h6>
+                                <h5 class="fw-bold text-center">
+                                    {{ $belanja }}%
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <div class="row chart-container align-items-stretch">
                     <!-- Pie Chart -->
-                    <div class="col-md-4 mb-3">
-                        <div class="card card-hover equal-height">
-                            <div class="card-body d-flex flex-column justify-content-center align-items-center p-2">
+                    <div class="col-md-4 mb-3 d-flex">
+                        <div class="card card-hover w-100 d-flex flex-column">
+                            <div class="card-header text-dark">
+                                <h5 class="mb-0">Persentase Pembagian Keuangan</h5>
+                            </div>
+                            <div
+                                class="card-body d-flex flex-column justify-content-center align-items-center p-2 flex-grow-1">
                                 <canvas id="pieChart" style="max-width: 100%; max-height: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
 
                     <!-- Grafik Proker -->
-                    <div class="col-md-8 mb-3">
-                        <div class="card equal-height card-hover" style="border-radius: 12px;">
-                            <div class="card-header text-white" style="background-color: #FF9898;">
-                                <h5 class="mb-0">Grafik Keuangan</h5>
+                    <div class="col-md-8 mb-3 d-flex">
+                        <div class="card card-hover w-100 d-flex flex-column" style="border-radius: 12px;">
+                            <div class="card-header text-dark">
+                                <h5 class="mb-0">Grafik Kredit dan Debit Keuangan</h5>
                             </div>
-                            <div class="card-body d-flex justify-content-center align-items-center">
+                            <div class="card-body d-flex justify-content-center align-items-center flex-grow-1">
                                 <canvas id="chartKeuangan" width="100%" height="40"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
                 <hr class="my-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="fas fa-table me-1"></i>
-                        Tabel Pencatatan Keuangan
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-table me-1"></i>
+                            Tabel Penerimaan dan Pengeluaran Keuangan
+                        </div>
                         @if (request('dari_tanggal') && request('sampai_tanggal'))
-                            <p><strong>Periode:</strong> {{ request('dari_tanggal') }} - {{ request('sampai_tanggal') }}</p>
+                            <p><strong>Periode : </strong> {{ request('dari_tanggal') }} - {{ request('sampai_tanggal') }}
+                            </p>
                         @endif
-                    </div>
+                        {{-- //untuk menampilkan tahun yang dipilih --}}
+                        <div class="dropdown">
 
-                    <div class="card-body">
+                            <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ is_numeric($tahunDipilih) ? 'Tahun ' . $tahunDipilih : $tahunDipilih }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url('/keuangan') }}">Keuangan Sekarang</a>
+                                </li>
+                                @foreach ($tahunList as $thn)
+                                    <li>
+                                        {{-- {{ dd($thn) }} --}}
+                                        <a class="dropdown-item" href="{{ url('/keuangan?tahun=' . $thn) }}">
+                                            Tahun {{ $thn }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body ">
                         <table id="datatablesSimple" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
+                                    <th>akun_id</th>
+                                    <th>Kode Transaksi</th>
                                     <th>Tanggal</th>
-                                    <th>Keterangan</th>
-                                    <th>Kode Keuangan</th>
                                     <th>
                                         Tipe
                                         <select id="filter-tipe" style="width: auto; float: right;">
@@ -122,64 +214,77 @@
                                             <option value="kredit">Kredit</option>
                                         </select>
                                     </th>
-                                    <th>Jumlah</th>
-                                    <th>Saldo Akhir</th>
+                                    <th>Jumlah (Rp)</th>
+                                    <th>Keterangan</th>
+                                    <th>Saldo Awal (Rp)</th>
+                                    <th>Saldo Akhir (Rp)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($dataTanggal as $data)
+                                @forelse ($dataKeuangan as $item)
                                     <tr>
-                                        <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d M Y') }}</td>
-                                        <td>{{ $data->keterangan }}</td>
-                                        <td>{{ $data->kode_keuangan }}</td>
-                                        <td>{{ ucfirst($data->tipe) }}</td>
-                                        <td>Rp{{ number_format($data->jumlah, 0, ',', '.') }}</td>
-                                        <td>Rp{{ number_format($data->saldo_akhir, 0, ',', '.') }}</td>
+                                        <td>{{ $item->akun->kode_akun ?? '-' }}</td>
+                                        <td>{{ $item->kode_keuangan }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
+                                        <td>{{ ucfirst($item->tipe) }}</td>
+                                        <td>{{ number_format($item->jumlah ?: 0, 2, ',', '.') }}</td>
+                                        <td>{{ $item->keterangan }}</td>
+                                        <td>{{ number_format($item->saldo_awal ?: 0, 2, ',', '.') }}</td>
+                                        <td>{{ number_format($item->saldo_akhir ?: 0, 2, ',', '.') }}</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6">Tidak ada data keuangan tersedia.</td>
+                                        <td colspan="7" class="text-center">Data tidak ditemukan</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
-                        <div class="row mt-2">
-                            <div class="col-md-3"> {{-- Ukuran card filter setengah baris --}}
-                                <div class="card shadow-sm">
-                                    <div class="card-body">
-                                        <form method="GET" action="{{ route('user.dashboard.keuangan') }}" class="mb-3"
-                                            id="filterForm">
-                                            <div class="mb-3">
-                                                <label for="dari_tanggal" class="form-label">Dari Tanggal</label>
-                                                <input type="text" name="dari_tanggal" class="form-control"
-                                                    id="dariTanggal" placeholder="dd/mm/yyyy" autocomplete="off"
-                                                    value="{{ request('dari_tanggal') }}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="sampai_tanggal" class="form-label">Sampai Tanggal</label>
-                                                <input type="text" name="sampai_tanggal" class="form-control"
-                                                    id="sampaiTanggal" placeholder="dd/mm/yyyy" autocomplete="off"
-                                                    value="{{ request('sampai_tanggal') }}">
-                                            </div>
-                                            <div>
-                                                <button type="submit" class="btn btn-primary me-2">🔍 Tampilkan</button>
-                                                <button type="button" class="btn btn-outline-secondary"
-                                                    id="resetTanggal">🔄 Reset Tanggal</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+                        <div class="card mb-4 shadow-sm" style="width: 25rem;">
+                            <div class="card-header">
+                                <p>Filter per tanggal</p>
                             </div>
+                            <div class="card-body shadow-sm">
+                                <form method="GET" action="{{ route('user.dashboard.keuangan') }}" class="mb-3"
+                                    id="filterForm">
+                                    <input type="hidden" name="tahun" value="{{ request('tahun') }}">
 
-                        </div>
-                        <div class="col-md-6 d-flex align-items-start">
-                            <a href="{{ route('download.keuangan') }}" class="btn btn-dark ms-md-auto mt-2 mt-md-0">
-                                <i class="bi bi-download"></i>&nbsp; Download Excel
-                            </a>
+                                    <div class="d-flex flex-column flex-md-row gap-3">
+                                        <div class="flex-grow-1">
+                                            <label for="dari_tanggal">Dari Tanggal</label>
+                                            <input type="text" name="dari_tanggal" class="form-control"
+                                                id="dariTanggal" placeholder="dd/mm/yyyy" autocomplete="off"
+                                                value="{{ request('dari_tanggal') }}">
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <label for="sampai_tanggal">Sampai Tanggal</label>
+                                            <input type="text" name="sampai_tanggal" class="form-control"
+                                                id="sampaiTanggal" placeholder="dd/mm/yyyy" autocomplete="off"
+                                                value="{{ request('sampai_tanggal') }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-primary me-2">🔍 Tampilkan</button>
+                                        <button type="button" class="btn btn-outline-secondary" id="resetTanggal">🔄
+                                            Reset
+                                            Tanggal</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-body ">
+                                <form action="{{ route('keuangan.exportpdf') }}" method="GET" class="mt-3">
+                                    <input type="hidden" name="dari_tanggal" value="{{ request('dari_tanggal') }}">
+                                    <input type="hidden" name="sampai_tanggal" value="{{ request('sampai_tanggal') }}">
+                                    <input type="hidden" name="tahun" value="{{ request('tahun', $tahunDipilih) }}">
+
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>

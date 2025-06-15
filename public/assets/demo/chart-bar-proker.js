@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         {
                             label: 'Anggaran Digunakan',
                             data: anggaran,
-                            backgroundColor: '#27ae60',
-                            borderColor: '#1e8449',
+                            backgroundColor: '#FF9800',
+                            borderColor: 'rgb(155, 101, 20)',
                             borderWidth: 2,
                             borderRadius: 8
                         }

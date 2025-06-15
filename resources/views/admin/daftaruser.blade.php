@@ -15,7 +15,7 @@
                         <table id="table" class="table table-striped table-bordered shadow-sm">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    {{-- <th>ID</th> --}}
                                     <th>Nama Lengkap</th>
                                     <th>Komisi / Unsur</th>
                                     <th>Username</th>
@@ -25,7 +25,7 @@
                             <tbody>
                                 @foreach ($users as $data)
                                     <tr>
-                                        <td>{{ $data->id }}</td>
+                                        {{-- <td>{{ $data->id }}</td> --}}
                                         <td>{{ $data->nama_lengkap }}</td>
                                         <td>{{ $data->komisi }}</td>
                                         <td>{{ $data->username }}</td>

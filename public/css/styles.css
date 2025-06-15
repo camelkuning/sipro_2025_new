@@ -79,6 +79,15 @@
   --bs-highlight-bg: #fff3cd;
 }
 
+.floating-btn {
+    transition: all 0.3s ease-in-out;
+}
+
+.floating-btn:hover {
+    transform: scale(1.1);
+    background-color: #28a745cc; /* lebih gelap dari hijau default */
+}
+
 .equal-height {
         height: 100%;
         min-height: 470px;

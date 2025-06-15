@@ -38,7 +38,7 @@
                         <div class="card border-0 text-white card-hover" style="background-color: #1E90FF;">
                             {{-- Dodger Blue --}}
                             <div class="card-body">
-                                <h6 class="card-title">Total Kredit</h6>
+                                <h6 class="card-title">Total Kredit Keuangan Umum</h6>
                                 <h5 class="fw-bold">
                                     Rp {{ number_format($totalKredit, 2, ',', '.') }}
                                 </h5>
@@ -73,23 +73,78 @@
                     </div>
                 </div>
 
-                <div class="row chart-container">
+                <div class="row">
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card border-0 text-white card-hover" style="background-color: #9E9D24;">
+                            {{-- Light Sea Green --}}
+                            <div class="card-body">
+                                <h6 class="card-title">Persentase Pembagian Ke Sinode</h6>
+                                <h5 class="fw-bold text-center">
+                                    {{ $sinode }}%
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card border-0 text-white card-hover" style="background-color: #607D8B;">
+                            {{-- Light Sea Green --}}
+                            <div class="card-body">
+                                <h6 class="card-title">Persentase Pembagian Ke Klasis</h6>
+                                <h5 class="fw-bold text-center">
+                                    {{ $klasis }}%
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card border-0 text-white card-hover" style="background-color: #E91E63;">
+                            {{-- Light Sea Green --}}
+                            <div class="card-body">
+                                <h6 class="card-title">Persentase Pembagian Ke Program Kerja</h6>
+                                <h5 class="fw-bold text-center">
+                                    {{ $program }}%
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card border-0 text-white card-hover" style="background-color: #795548;">
+                            {{-- Light Sea Green --}}
+                            <div class="card-body">
+                                <h6 class="card-title">Persentase Pembagian Ke Belanja Rutin</h6>
+                                <h5 class="fw-bold text-center">
+                                    {{ $belanja }}%
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <div class="row chart-container align-items-stretch">
                     <!-- Pie Chart -->
-                    <div class="col-md-4 mb-3">
-                        <div class="card card-hover equal-height">
-                            <div class="card-body d-flex flex-column justify-content-center align-items-center p-2">
+                    <div class="col-md-4 mb-3 d-flex">
+                        <div class="card card-hover w-100 d-flex flex-column">
+                            <div class="card-header text-dark">
+                                <h5 class="mb-0">Persentase Pembagian Keuangan</h5>
+                            </div>
+                            <div
+                                class="card-body d-flex flex-column justify-content-center align-items-center p-2 flex-grow-1">
                                 <canvas id="pieChart" style="max-width: 100%; max-height: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
 
                     <!-- Grafik Proker -->
-                    <div class="col-md-8 mb-3">
-                        <div class="card equal-height card-hover" style="border-radius: 12px;">
-                            <div class="card-header text-white" style="background-color: #FF9898;">
-                                <h5 class="mb-0">Grafik Keuangan</h5>
+                    <div class="col-md-8 mb-3 d-flex">
+                        <div class="card card-hover w-100 d-flex flex-column" style="border-radius: 12px;">
+                            <div class="card-header text-dark">
+                                <h5 class="mb-0">Grafik Kredit dan Debit Keuangan</h5>
                             </div>
-                            <div class="card-body d-flex justify-content-center align-items-center">
+                            <div class="card-body d-flex justify-content-center align-items-center flex-grow-1">
                                 <canvas id="chartKeuangan" width="100%" height="40"></canvas>
                             </div>
                         </div>

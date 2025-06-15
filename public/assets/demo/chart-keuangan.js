@@ -19,25 +19,26 @@ document.addEventListener("DOMContentLoaded", function () {
                     labels: bulan,
                     datasets: [
                         {
-                            label: 'Pemasukan (Kredit)',
+                            label: 'Pemasukan (Total Kredit/bulan)',
                             data: totalKredit,
                             fill: false,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: '#1E90FF',
+                            borderColor: '#1E90FF',
                             borderWidth: 3,
                             tension: 0.4,
-                            pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                            pointBackgroundColor: '#1E90FF',
                             pointRadius: 5
                         },
+                        
                         {
-                            label: 'Pengeluaran (Debit)',
+                            label: 'Pengeluaran (Total Debit/bulan)',
                             data: totalDebit,
                             fill: false,
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: '#FFA500',
+                            borderColor: '#FFA500',
                             borderWidth: 3,
                             tension: 0.4,
-                            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                            pointBackgroundColor: '#FFA500',
                             pointRadius: 5
                         }
                     ]

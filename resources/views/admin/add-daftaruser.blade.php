@@ -10,7 +10,7 @@
                     @csrf
                     <div class="mb-3">
                         <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
+                        <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" placeholder="Nama Lengkap" required>
                     </div>
                     <div class="mb-3">
                         <label for="komisi" class="form-label">Komisi / Unsur</label>
@@ -22,6 +22,7 @@
                             <option value="Persekutuan Wanita">Persekutuan Wanita</option>
                         </select>
                     </div>
+                    
                     <div class="mb-3">
                         <label for="role" class="form-label">Role</label>
                         <select class="form-control" id="role" name="role" required>
@@ -30,20 +31,25 @@
                     </div>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password |</label>
-                        <small class="text-danger"> harus berisikan 6 karakter</small>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <small class="text-danger"> harus berisikan minimal 6 karakter</small>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Passowrd" required>
                     </div>
                     <div class="mb-3">
                         <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                         <input type="password" class="form-control" id="password_confirmation"
-                            name="password_confirmation" required>
-                        <small id="passwordError" class="text-danger d-none">Password yang anda masukan tidak cocok!</small>
+                            name="password_confirmation" placeholder="Konfirmasi Passowrd" required>
+                        <small id="passwordError" class="text-danger d-none">Password yang anda masukan tidak
+                            cocok!</small>
                     </div>
-                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-center">
+                            <button type="submit" class="btn btn-success">Simpan</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

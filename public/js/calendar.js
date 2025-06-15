@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Masukkan ke modal
                     var isi = `
-                        <strong>Nama Program Kerja:</strong><br>${judul}<br><br>
-                        <strong>Tanggal Mulai:</strong> ${mulai}<br>
-                        <strong>Tanggal Selesai:</strong> ${selesai}
+                        <strong>Nama Program Kerja: </strong> ${judul}<br>
+                        <strong>Tanggal Mulai: </strong> ${mulai}<br>
+                        <strong>Tanggal Selesai: </strong> ${selesai}
                     `;
                     document.getElementById('isiDetailProker').innerHTML = isi;
 

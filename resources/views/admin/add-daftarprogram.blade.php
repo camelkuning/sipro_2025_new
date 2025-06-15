@@ -9,7 +9,7 @@
             <div class="modal-body">
                 <form action="{{ route('programkerja.store') }}" method="POST">
                     @csrf
-                    <div class="mb-3" >
+                    <div class="mb-3">
                         <label for="kode_akun" class="form-label">Akun</label>
                         <select name="akun_id" class="form-control" required>
                             @foreach ($daftarAkun as $akun)
@@ -78,15 +78,19 @@
                         <input type="text" class="form-control" id="tahun" name="tahun"
                             placeholder="Masukkan tahun" required>
                     </div>
-                    <div class="mb-3" >
+                    <div class="mb-3" style="display: none;">
                         <label for="status" class="form-label">Status</label>
-                        <select class="form-select" id="status" name="status" required>
-                            <option value="" disabled selected>Pilih Status</option>
-                            <option value="aktif">Aktif</option>
-                            <option value="diarsipkan">Diarsipkan</option>
+                        <select class="form-select" id="status" name="status">
+                            <option value="aktif" selected>Aktif</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-success">Simpan</button>
+
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-center">
+                            <button type="submit" class="btn btn-success">Simpan</button>
+                        </div>
+                    </div>
+
                 </form>
             </div>
         </div>

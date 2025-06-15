@@ -19,7 +19,7 @@ class ProgramKerjaBudgetSeeder extends Seeder
             'tahun_alokasi' => 2026,
             // Contoh dana alokasi tahun depan (misalnya 30% dari total pemasukan)
             'tahun_budget' => 2025,
-            'budget_berjalan' => 10000000, // Dana program kerja untuk tahun berjalan
+            'budget_berjalan' => 100000000, // Dana program kerja untuk tahun berjalan
         ]);
 
         // // Menambahkan data untuk tahun 2026

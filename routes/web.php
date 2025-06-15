@@ -94,3 +94,8 @@ Route::middleware(['role:user'])->group(function () {
     Route::get('/keuangan', [UserController::class, 'dashboardKeuanganUser'])->name('user.dashboard.keuangan'); ;
     // Route::get('/chart-data', [UserController::class, 'getChartData'])->name('chart.data');
 });
+
+// Route::get('/cek-tanggal', function () {
+//     \Carbon\Carbon::setLocale('id');
+//     return \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY HH:mm:ss');
+// });

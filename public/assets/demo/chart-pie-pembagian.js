@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     datasets: [{
                         data: values,
                         backgroundColor: [
-                            '#FF6384',
-                            '#36A2EB',
-                            '#FFCE56',
-                            '#4BC0C0'
+                            '#9E9D24',
+                            '#607D8B',
+                            '#E91E63',
+                            '#795548'
                         ],
                         hoverOffset: 10
                     }]
@@ -60,10 +60,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             }
                         },
-                        title: {
-                            display: true,
-                            text: 'Persentase Pembagian Pengeluaran Keuangan'
-                        }
                     }
                 }
             });

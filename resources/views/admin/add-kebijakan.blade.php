@@ -1,7 +1,8 @@
 <div class="modal fade" id="modalTambahKebijakan-{{ $item->id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
-        <form action="{{ route('programkerja.tambahDanaKebijakan', $item->kode_program_kerja) }}" method="POST" class="form-kebijakan">
+        <form action="{{ route('programkerja.tambahDanaKebijakan', $item->kode_program_kerja) }}" method="POST"
+            class="form-kebijakan">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
@@ -20,7 +21,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <div class="col-12 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                    </div>
                 </div>
             </div>
         </form>
@@ -48,4 +51,3 @@
         });
     });
 </script>
-

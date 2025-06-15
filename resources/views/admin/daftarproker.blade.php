@@ -1,7 +1,7 @@
 @extends('layouts.main')
 @section('title', 'Admin | add Proker')
 @section('content')
-<style>
+    <style>
         #datatablesSimple td:nth-child(7),
         /* anggaran digunakan */
         #datatablesSimple td:nth-child(8),
@@ -16,7 +16,21 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4 ">
-                <h1 class="mt-4">Pengeluaran Program Kerja</h1>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h1>Pengeluaran Program Kerja</h1>
+
+                    <div class="text-end">
+                        <div class="d-flex align-items-center justify-content-end">
+                            <i class="far fa-calendar-alt me-2"></i>
+                            <span id="tanggal">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</span>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-end">
+                            <i class="far fa-clock me-2"></i>
+                            <span id="jam">{{ \Carbon\Carbon::now()->format('HH:mm:ss') }}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <hr class="my-4">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -128,7 +142,7 @@
                                     <p><strong>Budget Program Kerja :</strong> Rp
                                         {{ number_format($budget_berjalan ?? 0, 0, ',', '.') }}
                                     </p>
-                                    <p><strong>Alokasi Tahun Depan :</strong> Rp
+                                    <p><strong>Total Alokasi Tahun Depan :</strong> Rp
                                         {{ number_format($alokasi_tahun_depan ?? 0, 0, ',', '.') }}</p>
                                 </div>
                             </div>
@@ -144,6 +158,18 @@
             </div>
         </main>
     </div>
+    <script>
+        function updateJam() {
+            const waktu = new Date();
+            const jam = waktu.getHours().toString().padStart(2, '0');
+            const menit = waktu.getMinutes().toString().padStart(2, '0');
+            const detik = waktu.getSeconds().toString().padStart(2, '0');
+            document.getElementById('jam').textContent = `${jam}:${menit}:${detik}`;
+        }
+
+        setInterval(updateJam, 1000);
+        updateJam(); // jalankan langsung saat halaman dimuat
+    </script>
     <script>
         function deleteProgramKerja(url) {
             Swal.fire({

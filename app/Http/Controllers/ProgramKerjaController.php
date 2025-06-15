@@ -81,35 +81,35 @@ class ProgramKerjaController extends Controller
     }
 
     // Tampilkan detail + pengeluaran
-    public function show($id)
-    {
-        $program = ProgramKerja::with('pengeluaran')->findOrFail($id);
-        return view('program_kerja.show', compact('program'));
-    }
+    // public function show($id)
+    // {
+    //     $program = ProgramKerja::with('pengeluaran')->findOrFail($id);
+    //     return view('program_kerja.show', compact('program'));
+    // }
 
-    // Tambah pengeluaran program kerja
-    public function storePengeluaran(Request $request, $programId)
-    {
-        $request->validate([
-            'tanggal' => 'required|date',
-            'keterangan' => 'required|string',
-            'jumlah' => 'required|numeric|min:1',
-        ]);
+    // // Tambah pengeluaran program kerja
+    // public function storePengeluaran(Request $request, $programId)
+    // {
+    //     $request->validate([
+    //         'tanggal' => 'required|date',
+    //         'keterangan' => 'required|string',
+    //         'jumlah' => 'required|numeric|min:1',
+    //     ]);
 
-        ProgramKerjaPengeluaran::create([
-            'program_kerja_id' => $programId,
-            'tanggal' => $request->tanggal,
-            'keterangan' => $request->keterangan,
-            'jumlah' => $request->jumlah,
-        ]);
+    //     ProgramKerjaPengeluaran::create([
+    //         'program_kerja_id' => $programId,
+    //         'tanggal' => $request->tanggal,
+    //         'keterangan' => $request->keterangan,
+    //         'jumlah' => $request->jumlah,
+    //     ]);
 
-        return back()->with('success', 'Pengeluaran berhasil ditambahkan.');
-    }
+    //     return back()->with('success', 'Pengeluaran berhasil ditambahkan.');
+    // }
 
     // Hapus pengeluaran
-    public function destroyPengeluaran($id)
-    {
-        ProgramKerjaPengeluaran::findOrFail($id)->delete();
-        return back()->with('success', 'Pengeluaran berhasil dihapus.');
-    }
+    // public function destroyPengeluaran($id)
+    // {
+    //     ProgramKerjaPengeluaran::findOrFail($id)->delete();
+    //     return back()->with('success', 'Pengeluaran berhasil dihapus.');
+    // }
 }

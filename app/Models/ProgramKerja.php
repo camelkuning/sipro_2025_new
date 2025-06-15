@@ -29,7 +29,7 @@ class ProgramKerja extends Model
         'anggaran_digunakan',
         'tambahan_dana_kebijakan',
         'tahun',
-        'status'
+        'status' => 'aktif', // default status program kerja
     ];
     // accessor untuk hitung total budget
     public function getTotalBudgetAttribute()

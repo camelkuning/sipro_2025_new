@@ -53,7 +53,7 @@ return new class extends Migration
             $table->decimal('anggaran_digunakan', 15, 2)->default(0); // anggaran yang digunakan
             $table->decimal('tambahan_dana_kebijakan', 15, 2)->nullable(); // tambahan dana kebijakan
             $table->string('tahun', 4); // contoh: '2025'
-            $table->enum('status', ['aktif', 'selesai'])->default('aktif');
+            $table->enum('status', ['aktif', 'diarsipkan'])->default('aktif');
             $table->timestamps();
 
         });

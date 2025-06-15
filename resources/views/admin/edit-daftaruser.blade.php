@@ -31,11 +31,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="edit_password" class="form-label">Password (Opsional)</label>
-                        <input type="password" class="form-control" id="edit_password" name="password">
+                        <input type="password" class="form-control" id="edit_password" name="password" placeholder="Passowrd">
                     </div>
                     <div class="mb-3">
                         <label for="edit_password_confirmation" class="form-label">Konfirmasi Password</label>
-                        <input type="password" class="form-control" id="edit_password_confirmation" name="password_confirmation">
+                        <input type="password" class="form-control" id="edit_password_confirmation" name="password_confirmation" placeholder="Konfirmasi Passowrd">
                         <small id="editPasswordError" class="text-danger d-none">Password yang anda masukan tidak cocok!</small>
                     </div>
                     <button type="submit" class="btn btn-success">Simpan Perubahan</button>

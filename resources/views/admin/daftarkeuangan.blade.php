@@ -42,6 +42,8 @@
                     </div>
                     <div class="card-body shadow-sm">
                         <form method="GET" action="{{ route('admin.daftarkeuangan') }}" class="mb-3" id="filterForm">
+                            <input type="hidden" name="tahun" value="{{ request('tahun') }}">
+
                             <div class="d-flex flex-column flex-md-row gap-3">
                                 <div class="flex-grow-1">
                                     <label for="dari_tanggal">Dari Tanggal</label>
@@ -62,6 +64,17 @@
                             </div>
                         </form>
                     </div>
+                    <div class="card-body ">
+                        <form action="{{ route('keuangan.exportpdf') }}" method="GET" class="mt-3">
+                            <input type="hidden" name="dari_tanggal" value="{{ request('dari_tanggal') }}">
+                            <input type="hidden" name="sampai_tanggal" value="{{ request('sampai_tanggal') }}">
+                            <input type="hidden" name="tahun" value="{{ request('tahun', $tahunDipilih) }}">
+
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                            </button>
+                        </form>
+                    </div>
                 </div>
 
                 <div class="card mb-4 shadow-sm">
@@ -71,10 +84,12 @@
                             Tabel Penerimaan dan Pengeluaran Keuangan
                         </div>
                         @if (request('dari_tanggal') && request('sampai_tanggal'))
-                            <p><strong>Periode:</strong> {{ request('dari_tanggal') }} - {{ request('sampai_tanggal') }}</p>
+                            <p><strong>Periode:</strong> {{ request('dari_tanggal') }} - {{ request('sampai_tanggal') }}
+                            </p>
                         @endif
                         {{-- //untuk menampilkan tahun yang dipilih --}}
                         <div class="dropdown">
+
                             <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ is_numeric($tahunDipilih) ? 'Tahun ' . $tahunDipilih : $tahunDipilih }}
@@ -85,6 +100,7 @@
                                 </li>
                                 @foreach ($tahunList as $thn)
                                     <li>
+                                        {{-- {{ dd($thn) }} --}}
                                         <a class="dropdown-item" href="{{ url('/daftarKeuangan?tahun=' . $thn) }}">
                                             Tahun {{ $thn }}
                                         </a>
@@ -143,7 +159,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($dataTanggal as $item)
+                                @forelse ($dataKeuangan as $item)
                                     <tr>
                                         <td>{{ $item->akun->kode_akun ?? '-' }}</td>
                                         <td>{{ $item->kode_keuangan }}</td>
@@ -196,11 +212,13 @@
                                 Rp {{ number_format($totalSaldo, 2, ',', '.') }}
                             </span>
                         </p>
-                        <p><strong>Total Kredit :</strong> Rp {{ number_format($totalKredit, 2, ',', '.') }}</p>
+                        <p><strong>Total Kredit Keuangan Umum :</strong> Rp {{ number_format($totalKredit, 2, ',', '.') }}
+                        </p>
                         <p><strong>Total Debit Keuangan Umum :</strong> Rp
                             {{ number_format($totalDebit, 2, ',', '.') }}</p>
                         <p><strong>Total Debit Keuangan Program Kerja :</strong> Rp
                             {{ number_format($debitProker, 2, ',', '.') }}</p>
+
 
                         <button type="button" class="btn btn-success" data-bs-toggle="modal"
                             data-bs-target="#modalTambahKeuangan">
@@ -209,9 +227,9 @@
                         {{-- <a href="{{ route('download.keuangan') }}" class="btn btn-dark">
                             <i class="bi bi-download"></i>&nbsp; Download Keuangan
                         </a> --}}
-                        <a href="{{ route('keuangan.exportpdf') }}" class="btn btn-danger">
+                        {{-- <a href="{{ route('keuangan.exportpdf') }}" class="btn btn-danger">
                             Export PDF
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
             </div>
